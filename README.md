@@ -6,6 +6,7 @@
  * `Keras`
  * `numpy`
  * `maplotlib`
+
 Recomended way is to use Anaconda environment (GPU enabled TensorFlow installation).
 
 # Description of files
