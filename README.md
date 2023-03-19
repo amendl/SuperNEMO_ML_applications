@@ -1,4 +1,13 @@
 # SuperNEMO_ML_applications
+## Goals
+## Required software
+ * `Root`
+ * `TensorFlow`
+ * `Keras`
+ * `numpy`
+ * `maplotlib`
+Recomended way is to use Anaconda environment (GPU enabled TensorFlow installation).
+
 # Description of files
  * `number_of_tracks_classification.py`
  * `combined.py` - Script for constructing and training model consisting from `top`, `side` and `front` models.
