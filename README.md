@@ -11,4 +11,9 @@ This folder contains essential scripts for loading and preprocessing data
  * `number_of_tracks_classification.py` - If you want to change folder with training and testing data, see line 20.
 ## Models
 Trained models in TensorFlow format.
+ * `top`
+ * `side`
+ * `front`
+ * `conbined`
+---
 If you have any questions feel free to contact me at [adam.mendl@cvut.cz](mailto:adam.mendl@cvut.cz).
