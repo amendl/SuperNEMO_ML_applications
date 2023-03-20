@@ -1,13 +1,17 @@
 # SuperNEMO_ML_applications
 ## Goals
 ## Required software
- * `Root`
+This software should be installed in python or Anaconda environment
+ * `Root` - Root is not needed to be explicitly install in python environment, any sourced Root on CCLyon should work (minimum tested verion 6.22.06)
+ * `cudatoolkit`, `cudnn` - Should be installed on CCLyon 
  * `TensorFlow`
- * `Keras`
+ * `Keras` - Should be part of tensorflow
  * `numpy`
  * `maplotlib`
-
-Recomended way is to use Anaconda environment (GPU enabled TensorFlow installation).
+Optional:
+ * `nvidia-pyindex`, `nvidia-tensorrt` for TensorRT support
+## Running scripts
+ Example is at `example_exec.sh`. Run it with `sbatch --mem=... -n 1 -t ... gres=gpu:v100:1 example_exec.sh` if you have access to GPU. Otherwise, leave out `gres` option.
 
 # Description of files
  * `number_of_tracks_classification.py`
