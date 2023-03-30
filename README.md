@@ -39,5 +39,12 @@ Trained models in TensorFlow format.
  * `combined` - Top, side and front view combined usign transfer learning
 # Results
 [Confusion matrix for combined model](./ImagesAndDocuments/combined.pdf)
+
+# Resources about ML
+ * [NIPS 2016 Tutorial: Generative Adversarial Networks](https://arxiv.org/pdf/1701.00160.pdf)
+ * [Series of articles on Capsule architecture](https://pechyonkin.me/capsules-1/)
+ * [Preprint on routing algorithm (Capsule architecture)](https://arxiv.org/abs/1710.09829)
+
+
 ---
 If you have any questions feel free to contact me at [adam.mendl@cvut.cz](mailto:adam.mendl@cvut.cz).
