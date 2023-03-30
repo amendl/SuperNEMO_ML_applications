@@ -33,11 +33,11 @@ This folder contains essential scripts for loading and preprocessing data
  * `associated_calohit_singlelabel.py`
 ## `models`
 Trained models in TensorFlow format.
- * `top`
- * `side`
- * `front`
+ * `top` - Number of tracks classifier viewing detector from top
+ * `side` - Number of tracks classifier viewing detector from side
+ * `front` - Number of tracks classifier viewing detector from front
  * `combined` - Top, side and front view combined usign transfer learning
 # Results
-![](./ImagesAndDocuments/combined.pdf)
+[Confusion matrix for combined model](./ImagesAndDocuments/combined.pdf)
 ---
 If you have any questions feel free to contact me at [adam.mendl@cvut.cz](mailto:adam.mendl@cvut.cz).
