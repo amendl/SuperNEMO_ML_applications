@@ -22,6 +22,7 @@ Example is at `example_exec.sh`. Run it with `sbatch --mem=... -n 1 -t ... gres=
  * `number_of_tracks_classification.py`
  * `combined.py` - Script for constructing and training model consisting from `top`, `side` and `front` models.
  * `number_of_tracks_classification3D.py` - TODO: Classification using Conv3D
+ * `plot_confusion.py` - Script helping analyze badly classified events
 ## `architectures`
  * `top`
  * `side`
