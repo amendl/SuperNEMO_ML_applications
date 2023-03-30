@@ -5,12 +5,13 @@
  * Predict associated calorimeter hit(s) using single-label classification on clustered events or multi-label classification on not clustered events.
 ## Required software
 This software should be installed in python or Anaconda environment
- * `Root` - Root is not needed to be explicitly install in python environment, any sourced Root on CCLyon should work (minimum tested verion 6.22.06)
+ * `Root` - Root is not needed to be explicitly installed in python environment, any sourced Root on CCLyon should work (minimum tested verion 6.22.06)
  * `cudatoolkit`, `cudnn` - Should be installed on CCLyon 
  * `TensorFlow`
  * `Keras` - Should be part of tensorflow
  * `numpy`
  * `maplotlib`, `seaborn`
+
 Optional:
  * `nvidia-pyindex`, `nvidia-tensorrt` for TensorRT support
  * `nvidia-smi` for checking usage and available memory on NVIDIA V100 GPU
