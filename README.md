@@ -1,4 +1,4 @@
-# SuperNEMO_ML_applications
+# Machine learning for SuperNEMO tracking and recontruction
 ## Goals
  * Calculate number of tracks in event by CNN.
  * Use generative adversarial networks with convolutional autoencoders for track clustering.
@@ -26,12 +26,18 @@ This folder contains files from [SN-IEGenerator](https://github.com/SuperNEMO-DB
  * `toyhaystack.py` - Clustering of hits into tracks added.
 ## `datasets`
 This folder contains essential scripts for loading and preprocessing data
- * `number_of_tracks_classification.py` - If you want to change folder with training and testing data, see line 20.
+ * `number_of_tracks.py` - If you want to change folder with training and testing data, see line 20.
+ * `number_of_tracks3D.py` - TODO
+ * `clustering.py`
+ * `associated_calohit_multilabel.py`
+ * `associated_calohit_singlelabel.py`
 ## `models`
 Trained models in TensorFlow format.
  * `top`
  * `side`
  * `front`
- * `combined`
+ * `combined` - Top, side and front view combined usign transfer learning
+# Results
+![](https://github.com/amendl/SuperNEMO_ML_applications/blob/main/ImagesAndDocuments/combined.pdf)
 ---
 If you have any questions feel free to contact me at [adam.mendl@cvut.cz](mailto:adam.mendl@cvut.cz).
