@@ -6,9 +6,9 @@
 ## Required software
 This software should be installed in python or Anaconda environment
  * `Root` - Root is not needed to be explicitly installed in python environment, any sourced Root on CCLyon should work (minimum tested verion 6.22.06)
- * `cudatoolkit`, `cudnn` - Should be installed on CCLyon 
+ * `cudatoolkit`, `cudnn` - Should be already installed on CCLyon 
  * `TensorFlow`
- * `Keras` - Should be part of tensorflow
+ * `Keras` - Should be part of Tensorflow
  * `numpy`
  * `maplotlib`, `seaborn`
 
@@ -23,7 +23,11 @@ Example is at `example_exec.sh`. Run it with `sbatch --mem=... -n 1 -t ... gres=
  * `combined.py` - Script for constructing and training model consisting from `top`, `side` and `front` models.
  * `number_of_tracks_classification3D.py` - TODO: Classification using Conv3D
 ## `architectures`
- Files defining architectures of used neural networks
+ * `top`
+ * `side`
+ * `front`
+ * `generator` - Generator used in GAN architecture
+ * `discriminator` - Discriminator used in GAN architecture
 ## `Generator`
 This folder contains files from [SN-IEGenerator](https://github.com/SuperNEMO-DBD/SN-IEgenerator) (version from Mar 7, 2018) that were modified for out project. 
  * `toyhaystack.py` - Clustering of hits into tracks added.
