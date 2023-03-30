@@ -38,6 +38,6 @@ Trained models in TensorFlow format.
  * `front`
  * `combined` - Top, side and front view combined usign transfer learning
 # Results
-![](https://github.com/amendl/SuperNEMO_ML_applications/blob/main/ImagesAndDocuments/combined.pdf)
+![](./ImagesAndDocuments/combined.pdf)
 ---
 If you have any questions feel free to contact me at [adam.mendl@cvut.cz](mailto:adam.mendl@cvut.cz).
