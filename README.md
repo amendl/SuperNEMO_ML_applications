@@ -22,6 +22,8 @@ Example is at `example_exec.sh`. Run it with `sbatch --mem=... -n 1 -t ... gres=
  * `number_of_tracks_classification.py`
  * `combined.py` - Script for constructing and training model consisting from `top`, `side` and `front` models.
  * `number_of_tracks_classification3D.py` - TODO: Classification using Conv3D
+## `architectures`
+ Files defining architectures of used neural networks
 ## `Generator`
 This folder contains files from [SN-IEGenerator](https://github.com/SuperNEMO-DBD/SN-IEgenerator) (version from Mar 7, 2018) that were modified for out project. 
  * `toyhaystack.py` - Clustering of hits into tracks added.
@@ -39,12 +41,16 @@ Trained models in TensorFlow format.
  * `front` - Number of tracks classifier viewing detector from front
  * `combined` - Top, side and front view combined usign transfer learning
 # Results
-[Confusion matrix for combined model](./ImagesAndDocuments/combined.pdf)
+* [Confusion matrix for combined model](./ImagesAndDocuments/combined.pdf)
 
-# Resources about ML
- * [NIPS 2016 Tutorial: Generative Adversarial Networks](https://arxiv.org/pdf/1701.00160.pdf)
+# Resources about Convolutional neural networks and autoencoders
  * [Series of articles on Capsule architecture](https://pechyonkin.me/capsules-1/)
  * [Preprint on routing algorithm (Capsule architecture)](https://arxiv.org/abs/1710.09829)
+ * [Multi-label image classification](https://towardsdatascience.com/multi-label-image-classification-with-neural-network-keras-ddc1ab1afede)
+ * [Deep Convolutional Generative Adversarial Network](https://www.tensorflow.org/tutorials/generative/dcgan)
+ * [Building a simple Generative Adversarial Network (GAN) using TensorFlow](https://blog.paperspace.com/implementing-gans-in-tensorflow/)
+ * [NIPS 2016 Tutorial: Generative Adversarial Networks](https://arxiv.org/pdf/1701.00160.pdf)
+
 
 
 ---
