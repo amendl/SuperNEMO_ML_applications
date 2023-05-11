@@ -8,11 +8,16 @@ import tensorflow as tf
 from tensorflow import keras
 from keras import layers
 from keras.callbacks import EarlyStopping
+import tensorflow.keras.backend as K
+
 
 import matplotlib.pyplot as plt
 
+import sys
+import datetime
+
 def add_prefix(model, prefix: str, custom_objects=None):
-    '''Adds a prefix to layers and model name while keeping the pre-trained weights
+    '''Adds a prefix to layers and model name while keeping the pre-trained weights for reusing loaded model for transfer learning
     Arguments:
         model: a tf.keras model
         prefix: a string that would be added to before each layer name
@@ -51,6 +56,48 @@ def add_prefix(model, prefix: str, custom_objects=None):
     
     return new_model
 
+def count_and_print_weights(model,_print=True):
+        trainable_count = np.sum([K.count_params(w) for w in model.trainable_weights])
+        non_trainable_count = np.sum([K.count_params(w) for w in model.non_trainable_weights])
+        if _print:
+            print(f'Total params: {trainable_count + non_trainable_count}')
+            print(f'Trainable params: {trainable_count}')
+            print(f'Non-trainable params: {non_trainable_count}')
+
+        return trainable_count,non_trainable_count
+
+def process_command_line_arguments():
+    '''
+        returns:
+            - device if --OneDeviceStategy otherwise None
+            - devices if --MirroredStrategy otherwise 
+    '''
+    mode = 0
+    device=None
+    devices=[]
+    for arg in sys.argv[1:]:
+        if arg=="--OneDeviceStrategy":
+            mode=1
+        elif arg=="--MirroredStrategy":
+            mode=2
+        elif mode==1:
+            device=arg
+        elif mode==2:
+            devices.append(arg)
+        else:
+            raise Exception(f"[Custom exception {__file__}:process_command_line_arguments]: \"{arg}\" is not valid parameter for this script.")
+        
+    return (device,devices)
+
+
+def choose_strategy(device,devices=None):
+    if devices is not None and devices:
+        return tf.distribute.MirroredStrategy(devices)
+    elif device is not None:
+        return tf.distribute.OneDeviceStrategy(device)
+    else:
+        raise Exception(f"[Custom exception {__file__}:strategy]: Not valid devices for tensorflow.distribute.MirroredStrategy nor valid device for tensorflow.distribute.OneDeviceStrategy were provided.")
+    
 
 def plot_train_val_accuracy(history,name = "training_accuracy.pdf"):
     plt.plot(history.history['accuracy'])
@@ -64,14 +111,18 @@ def plot_train_val_accuracy(history,name = "training_accuracy.pdf"):
         format = 'pdf'
     )
 
-def confusion(model, test_dataset):
+def confusion(model, test_dataset,generatePdf=False):
+    '''
+        Calculates and prints confusion matrix
+        TODO: generate directly pdf
+    '''
     y_true = []
 
     for _,label in test_dataset:
         y_true.append(tf.argmax(label))
 
     print("Creating confusion matrix")
-    prediction=model.predict(test_dataset.batch(256))
+    prediction=model.predict(test_dataset.batch(1024))
     prediction = np.argmax(prediction, axis=1)
     cm = confusion_matrix(prediction, y_true)
     tf.print(cm,summarize=-1)
@@ -81,82 +132,117 @@ def load_trained_model(file, index,prefix):
     A = add_prefix(original,prefix)
     for layer in A.layers:
         layer.trainable=False
-    print(A.layers[index])
+    print(f"Last layer before fully connected layers in {prefix} model",str(A.layers[index].name))
     return (A,A.layers[index])
 
 if __name__=='__main__':
-    print(tf.config.list_physical_devices())
+    print("List of physical devices: ",tf.config.list_physical_devices())
+
+    device,devices = process_command_line_arguments()
+    strategy = choose_strategy(device,devices)
+    # print(f"Strategy arguments {device}; {devices}")
+    print("Running with strategy: ",str(strategy))
 
     tracks = 4
     files=10
     events = 5000
+    datetime_string = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 
-    A, A_model_output = load_trained_model("../big_model/model",-5,"top_")
-    B, B_model_output = load_trained_model("../height_model2/model",-5,"side_")
-    C, C_model_output = load_trained_model("../front_model2/model",-5,"front_")
-    
-    x = layers.Concatenate()([A_model_output.output,B_model_output.output,C_model_output.output])
-    x = layers.Dense(384,activation='tanh',use_bias=False)(x)
-    x = layers.Dense(256,activation='tanh',use_bias=False)(x)
-    x = layers.Dense(128,activation='tanh',use_bias=False)(x)
-    x = layers.Dense(64,activation='tanh',use_bias=False)(x)
-    x = layers.Dense(4)(x)
-    x = layers.Softmax()(x)
-    model = keras.Model(inputs=[A.input, B.input,C.input], outputs=x)
-
-    dataset_size = tracks*files*events
-    dataset = tf.data.Dataset.from_generator(
-        generator = lambda: task.generator(tracks,[0,1,2,3,4,5,6,7],events),
-        output_signature=(tf.TensorSpec(shape=(3),dtype=tf.int64))
-    )
-    dataset = dataset.shuffle(dataset_size,reshuffle_each_iteration = True)
-    dataset = dataset.map(task.load_event)
-    print(dataset)
-
-    val_dataset = tf.data.Dataset.from_generator(
-        generator = lambda: task.generator(tracks,[8],events),
-        output_signature=(tf.TensorSpec(shape=(3),dtype=tf.int64))
-    )
-    val_dataset = val_dataset.map(task.load_event)
-    print(val_dataset)
+    with strategy.scope():
+        A, A_model_output = load_trained_model("../big_model/model",-5,"top_")
+        B, B_model_output = load_trained_model("../height_model2/model",-5,"side_")
+        C, C_model_output = load_trained_model("../front_model2/model",-5,"front_")
 
 
-    test_dataset = tf.data.Dataset.from_generator(
-        generator = lambda: task.generator(tracks,[9],events),
-        output_signature=(tf.TensorSpec(shape=(3),dtype=tf.int64))
-    )
-    test_dataset = test_dataset.map(task.load_event)
+        x = layers.Concatenate()([A_model_output.output,B_model_output.output,C_model_output.output])
+        x = layers.Dense(384,activation='tanh',use_bias=False)(x)
+        x = layers.Dense(256,activation='tanh',use_bias=False)(x)
+        x = layers.Dense(128,activation='tanh',use_bias=False)(x)
+        x = layers.Dense( 64,activation='tanh',use_bias=False)(x)
+        x = layers.Dense(  4,use_bias=False)(x)
+        x = layers.Softmax()(x)
+        model = keras.Model(inputs=[A.input, B.input,C.input], outputs=x)
+
+        print("Model summary:")
+        count_and_print_weights(model,True)
+
+        dataset_size = tracks*files*events
+        dataset = tf.data.Dataset.from_generator(
+            generator = lambda: task.generator(tracks,[0,1,2,3,4,5,6],events),
+            output_signature=(tf.TensorSpec(shape=(3),dtype=tf.int64))
+        )
+        dataset = dataset.shuffle(dataset_size,reshuffle_each_iteration = True)
+        dataset = dataset.map(task.load_event)
+        print(dataset)
+
+        val_dataset = tf.data.Dataset.from_generator(
+            generator = lambda: task.generator(tracks,[8],events),
+            output_signature=(tf.TensorSpec(shape=(3),dtype=tf.int64))
+        )
+        val_dataset = val_dataset.map(task.load_event)
+        print(val_dataset)
 
 
-    # compile and train model with freezed convolutional section
-    model.compile(
-        optimizer = 'adam',
-        loss = tf.keras.losses.CategoricalCrossentropy(from_logits=False),
-        metrics = ['accuracy']
-    )
-    history = model.fit(
-        x = dataset.batch(256),
-        epochs = 15,
-        validation_data = val_dataset.batch(256),
-        callbacks=[EarlyStopping(monitor='val_accuracy',mode='max',baseline=0.9,start_from_epoch=5,min_delta=0.01)]
-    )
+        test_dataset = tf.data.Dataset.from_generator(
+            generator = lambda: task.generator(tracks,[9],events),
+            output_signature=(tf.TensorSpec(shape=(3),dtype=tf.int64))
+        )
+        test_dataset = test_dataset.map(task.load_event)
+
+# compile and train model with freezed convolutional section
+
+
+        model.compile(
+            optimizer = 'adam',
+            loss = tf.keras.losses.CategoricalCrossentropy(from_logits=False),
+            metrics = ['accuracy']
+        )
+
+        early_stopping_callback = EarlyStopping(monitor='val_accuracy',mode='max',baseline=0.9,start_from_epoch=5,min_delta=0.01)
+
+
+        log_dir = "fit_logs1/" + datetime_string
+        tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
+
+
+
+    with tf.profiler.experimental.Profile("profiler_1/" + datetime_string):
+        history = model.fit(
+            x = dataset.batch(1024),
+            epochs = 15,
+            validation_data = val_dataset.batch(1024),
+            callbacks=[early_stopping_callback,tensorboard_callback]
+        )
     plot_train_val_accuracy(history,"freezed_convolution.pdf")
     confusion(model,test_dataset)
 
-    # unfreeze convolutional section and train model
-    for layer in model.layers:
-        layer.trainable=True
-    model.compile(
-        optimizer = 'adam',
-        loss = tf.keras.losses.CategoricalCrossentropy(),
-        metrics = ['accuracy']
-    )
-    history = model.fit(
-        x = dataset.batch(256),
-        epochs = 15,
-        validation_data = val_dataset.batch(256),
-        callbacks=[EarlyStopping(monitor='val_accuracy',mode='max',baseline=0.9,start_from_epoch=5,min_delta=0.01)]
-    )
+# unfreeze convolutional section and train model
+
+
+    with strategy.scope():
+
+        for layer in model.layers:
+            layer.trainable=True
+        model.compile(
+            optimizer = 'adam',
+            loss = tf.keras.losses.CategoricalCrossentropy(from_logits=False),
+            metrics = ['accuracy']
+        )
+        early_stopping_callback = EarlyStopping(monitor='val_accuracy',mode='max',baseline=0.9,start_from_epoch=5,min_delta=0.01)
+
+        print("Model summary:")
+        count_and_print_weights(model,True)
+
+        log_dir = "fit_logs2/" + datetime_string
+        tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
+
+    with tf.profiler.experimental.Profile("profiler_2/" + datetime_string):
+        history = model.fit(
+            x = dataset.batch(1024),
+            epochs = 15,
+            validation_data = val_dataset.batch(1024),
+            callbacks=[early_stopping_callback,tensorboard_callback]
+        )
     plot_train_val_accuracy(history,"unfreezed_convolution.pdf")
     confusion(model,test_dataset)
 
