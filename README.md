@@ -11,6 +11,7 @@ This software should be installed in python or Anaconda environment
  * `keras` - Should be part of `tensorflow`
  * `numpy`
  * `maplotlib`, `seaborn`
+ 
 Optional:
  * `tensorboard` - Should be part of `tensorflow`
  * `tensorboard_plugin_profile` - Should be part of `tensorflow`
