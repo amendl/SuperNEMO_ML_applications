@@ -187,6 +187,9 @@ def confusion(model, test_dataset):
 
 
 if __name__=="__main__":
+    print(tf.config.list_physical_devices())
+
+    
     '''
     
     '''
@@ -194,7 +197,7 @@ if __name__=="__main__":
     files=10
     events = 5000
 
-    model = architectureFront()
+    model = architectureHeight()
 
     keras.utils.plot_model(model = model,to_file = "model.png",show_shapes= True,show_dtype = True)
     # visualizer(
@@ -228,9 +231,9 @@ if __name__=="__main__":
         metrics = ['accuracy']
     )
     history = model.fit(
-        x = dataset.batch(256),
+        x = dataset.batch(1024),
         epochs = 15,
-        validation_data = val_dataset.batch(256),
+        validation_data = val_dataset.batch(1024),
         callbacks=[EarlyStopping(monitor='val_accuracy',mode='max',baseline=0.9,start_from_epoch=6,min_delta=0.01)]
     )
     plot_train_val_accuracy(history)
