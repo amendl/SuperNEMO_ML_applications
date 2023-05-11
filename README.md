@@ -27,10 +27,10 @@ Scripts can use two strategies. To use only one GPU use option `--OneDeviceStrat
  * `combined.py` - Script for constructing and training model consisting from `top`, `side` and `front` models.
  * `number_of_tracks_classification3D.py` - TODO: Classification using Conv3D
  * `plot_confusion.py` - Script helping analyze badly classified events
- * `clustering_one.py`
+ * `clustering_one.py`- example of custom trainig loop for GAN autoencoders used for clustering
 ## `capsule`
  * `routing_by_agreement.py` - tensorflow.while_loop implementation of routing algorithm
- * `capsule_lib.py` - 
+ * `capsule_lib.py` - basic parts of CapsNET architecture
 ## `architectures`
  * `top`
  * `side`
@@ -58,7 +58,9 @@ Trained models in TensorFlow format.
  * `combined` - Top, side and front view combined usign transfer learning
 # Results
 * [Confusion matrix for combined model](./ImagesAndDocuments/combined.pdf)
-
+# Issues
+ * sbatch and tensorflow sometimes fail to initialize libraries (mainly to source python from virtual environment or root) - start the script again
+ * tensorflow sometimes runs out of memory - don't use checkpoints for tensorboard
 # Resources
 ## Convolutional neural networks and autoencoders
  * [Multi-label image classification](https://towardsdatascience.com/multi-label-image-classification-with-neural-network-keras-ddc1ab1afede)
@@ -70,6 +72,8 @@ Trained models in TensorFlow format.
  * [Preprint on routing algorithm (Capsule architecture)](https://arxiv.org/abs/1710.09829)
  * [Tensorflow implementation 1](https://www.kaggle.com/code/giovanimachado/capsnet-tensorflow-implementation)
  * [Tensorflow implementation 2](https://towardsdatascience.com/implementing-capsule-network-in-tensorflow-11e4cca5ecae)
+## Tensorflow
+ * [Dense layer keras (how to build custom keras model)](https://github.com/keras-team/keras/blob/v2.12.0/keras/layers/core/dense.py)
 
 
 ---
