@@ -1,4 +1,10 @@
-# Machine learning for SuperNEMO tracking and recontruction
+# Outline
+ * [Overview](#overview) 
+ * [Description of files](#description-of-files)
+ * [Results](#results)
+ * [Issues](#issues)
+ * [Resources](#resources)
+# Overview
 ## Goals
  * Calculate number of tracks in event by CNN.
  * Use generative adversarial networks with convolutional autoencoders for track clustering.
