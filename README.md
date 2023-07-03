@@ -78,7 +78,7 @@ Trained models in TensorFlow format.
  * [Tricks for custom layers](https://oliver-k-ernst.medium.com/a-cheat-sheet-for-custom-tensorflow-layers-and-models-aa465df2bc8b)
 ## Classification
  * [Facebook, Instagram: Exploring the Limits of Weakly Supervised Pretraining](https://arxiv.org/pdf/1805.00932.pdf) - [Discussion #1](https://stats.stackexchange.com/questions/433867/why-is-softmax-considered-counter-intuitive-for-multi-label-classification), [Discussion #2](https://stackoverflow.com/questions/66990074/using-softmax-for-multilabel-classification-as-per-facebook-paper)
- ** how to use softmax for multi-label classification
+   * how to use softmax for multi-label classification
 ## Random stuff
  * [Transformer position as dynamical model](https://assets.amazon.science/f0/32/ff7d9669492bbe2dedb8ee3cb3e5/learning-to-encode-position-for-transformer-with-continuous-dunamical-model.pdf)
  * [Neural Ordinary Differential Equations](https://papers.nips.cc/paper_files/paper/2018/hash/69386f6bb1dfed68692a24c8686939b9-Abstract.html)
