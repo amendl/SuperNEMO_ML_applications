@@ -5,8 +5,12 @@
  * Use generative adversarial networks with convolutional autoencoders for track clustering.
  * Predict associated calorimeter hit(s) using single-label classification on clustered events or multi-label classification on not clustered events.
 ## Required software
-This software should be installed in python or Anaconda environment
- * `Root` - Root is not needed to be explicitly installed in python or Anaconda environment, any sourced Root on CCLyon should work (minimum tested verion 6.22.06)
+Almost everything runs ot top of `python3`. On CCLyon use `python` sourced with `root` via
+1. `ccenv root 6.22.06` - loads `python 3.8.6` (**does not work now**)
+2. since July 12 2023 `module add Analysis/root/6.22.06-fix01` - loads `python 3.9.1` (**currently, this is the way to go**)
+
+This software should be installed in python or Anaconda environment (python environment is prefered since it can access  both sourced root package and all gpu related software directly, however it is still possible to make it work with Anaconda)
+ * `Root` - Root is not needed to be explicitly installed in python or Anaconda environment, any sourced Root on CCLyon should work - minimum tested verion 6.22.06 (since July 12 2021 6.22.06-fix01)
  * `cudatoolkit`, `cudnn` - Should be already installed on CCLyon 
  * `tensorflow`
  * `keras` - Should be part of `tensorflow`
