@@ -26,7 +26,11 @@ Optional:
 Example is at `example_exec.sh`. Run it with `sbatch --mem=... -n 1 -t ... gres=gpu:v100:N example_exec.sh` if you have access to GPU, where `N` is number of GPUs you want to use. Otherwise, leave out `gres` option.
 
 Scripts can use two strategies. To use only one GPU use option `--OneDeviceStrategy "/gpu:0"`. If you want to use more GPUs, use for example `--MirroredStrategy "/gpu:0" "/gpu:1" "/gpu:2"`.
-
+## Workflow overview
+1. source `python` and `root` -  `module add Analysis/root/6.22.06-fix01`
+2. create python virtual environment (if not done yet) 
+3. install [packages](#required-software) (if not done yet)
+4. load python virtual environment
 # Description of files
  * `number_of_tracks_classification.py`
  * `combined.py` - Script for constructing and training model consisting from `top`, `side` and `front` models.
