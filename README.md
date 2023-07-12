@@ -18,6 +18,8 @@ This software should be installed in python or Anaconda environment (python envi
  * `keras` - Should be part of `tensorflow`
  * `numpy`
  * `maplotlib`, `seaborn`
+ * `scikit-learn`
+ * `pydot`, `graphviz`
  
 Optional:
  * `tensorboard` - Should be part of `tensorflow`
