@@ -63,10 +63,14 @@ This folder contains essential scripts for loading and preprocessing data
  * `associated_calohit_singlelabel.py`
 ## `models`
 Trained models in TensorFlow format.
- * `top` - Number of tracks classifier viewing detector from top
- * `side` - Number of tracks classifier viewing detector from side
- * `front` - Number of tracks classifier viewing detector from front
- * `combined` - Top, side and front view combined usign transfer learning
+ * `top` - Number of tracks classifier viewing detector from top (`SN-IEGenerator`)
+ * `side` - Number of tracks classifier viewing detector from side (`SN-IEGenerator`)
+ * `front` - Number of tracks classifier viewing detector from front (`SN-IEGenerator`)
+ * `combined` - Top, side and front view combined usign transfer learning (`SN-IEGenerator`)
+ * `top_my_generator` - Number of tracks classifier viewing detector from top (`my_generator`)
+ * `side_my_generator ` - Number of tracks classifier viewing detector from side (`my_generator`)
+ * `front_my_generator ` - Number of tracks classifier viewing detector from front (`my_generator`)
+ * `combined_my_generator ` - Top, side and front view combined usign transfer learning (`my_generator`)
 # Results
 * [Confusion matrix for combined model](./ImagesAndDocuments/combined.pdf)
 # Issues
