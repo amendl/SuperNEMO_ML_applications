@@ -1,9 +1,11 @@
 
-# Overview
-## Goals
+
+# Goals
  * Calculate number of tracks in event by CNN.
  * Use generative adversarial networks with convolutional autoencoders for track clustering.
  * Predict associated calorimeter hit(s) using single-label classification on clustered events or multi-label classification on not clustered events.
+# Software
+This should work without problems on CCLyon in2p3 computation cluster.
 ## Required software
 Almost everything runs ot top of `python3`. On CCLyon use `python` sourced with `root` via
 1. `ccenv root 6.22.06` - loads `python 3.8.6` (**does not work now**)
