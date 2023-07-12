@@ -79,7 +79,9 @@ def load_event_helper(event_id):
 
     tree.GetEntry(event_id.numpy()[2])
 
-    event                                  = py_load_event(tree)           
+    event                                  = py_load_event(tree)
+    event_height                           = py_load_event_height(tree)
+    event_front                            = py_load_event_front(tree)     
     # [event_height,]                             = tf.py_function(func=py_load_event_height,     inp=[tree], Tout=[tf.TensorSpec(shape=(30,113),  dtype=tf.float64)])
     # event_height                                .set_shape((30,113))
     # [event_front,]                              = tf.py_function(func=py_load_event_front,      inp=[tree], Tout=[tf.TensorSpec(shape=(30,9),    dtype=tf.float64)])
@@ -87,41 +89,62 @@ def load_event_helper(event_id):
     result,result_row,result_column          = py_load_result(tree,event_id)
 
 
-    return event,result,result_row,result_column
+    return event,event_height,event_front,result,result_row,result_column
 
 def load_event(event_id):
-    [event,result,_,result_column]=tf.py_function(func=load_event_helper,inp=[event_id],Tout=[
-                                                                                tf.TensorSpec(shape=(9,113),   dtype=tf.float64),
-                                                                            
-                                                                                tf.TensorSpec(shape=(4),dtype=tf.float64),
-                                                                                tf.TensorSpec(shape=(15),dtype=tf.float64),
-                                                                                tf.TensorSpec(shape=(22),dtype=tf.float64)
-                                                                                
-                                                                             ]
-                                                                            )
-    event                                       .set_shape((9,113))
-    result                                      .set_shape((4))
-    result_column                               .set_shape((22))
+    '''
+        If you want to change which data should be used for training, use return value of this function
+    '''
+    [event_top,event_height,event_front,result,result_row,result_column]    =   tf.py_function(
+                                                                                    func=load_event_helper,
+                                                                                    inp=[event_id],
+                                                                                    Tout=[
+                                                                                        tf.TensorSpec(shape=(9,113),    dtype=tf.float64),
+                                                                                        tf.TensorSpec(shape=(30,113),   dtype=tf.float64),
+                                                                                        tf.TensorSpec(shape=(30,9),     dtype=tf.float64),
+                                                                                        tf.TensorSpec(shape=(4),        dtype=tf.float64),
+                                                                                        tf.TensorSpec(shape=(15),       dtype=tf.float64),
+                                                                                        tf.TensorSpec(shape=(22),       dtype=tf.float64)
+                                                                                    ]
+                                                                                )
 
-    return event,(result,result_column)
+
+             
+    event_top           .set_shape((9,113))
+    event_height        .set_shape((30,113))
+    event_front         .set_shape((30,9))
+
+    result              .set_shape((4))
+    result_row          .set_shape((15))
+    result_column       .set_shape((22))
+
+    return (event_top,event_height,event_front),(result,result_row,result_column)
+    # return event_top
+
+
+def print_group(group):
+    if type(group) is tuple or type(group) is list :
+        for i in group:
+            tf.print(i,summarize=-1)
+    else:
+        tf.print(group,summarize=-1)
 
 def print_event(event_number):
+    '''
+        load event should return (event_top,event_height,event_front),(result,result_column)
+    '''
     print(event_number)
     event_group, result_group = load_event(event_number)
-    event,_,_= event_group
-    result,result_row,result_column=result_group
-    tf.print(result,            summarize=-1)
-    tf.print(result_row,        summarize=-1)
-    tf.print(result_column,     summarize=-1)
-    tf.print(event,             summarize=-1)
-
+    print_group(result_group)
+    print_group(event_group)
 
 if __name__ == '__main__':
     print_event((1,0,14))
     print_event((1,0,15))
-    print_event((1,0,16))
-    print_event((1,0,17))
-    print_event((1,0,18))
-    print_event((1,0,19))
-    print_event((1,0,20))
+    print_event((2,0,16))
+    print_event((2,0,17))
+    print_event((3,0,18))
+    print_event((3,0,19))
+    print_event((4,0,20))
+    print_event((4,0,20))
 
