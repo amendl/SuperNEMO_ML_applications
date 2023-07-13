@@ -106,6 +106,14 @@ Trained models in TensorFlow format.
  * [Discussion about Tensorflow losses](https://stats.stackexchange.com/questions/207794/what-loss-function-for-multi-class-multi-label-classification-tasks-in-neural-n)
  * [A no-regret generalization of hierarchical softmax to extreme multi-label classification](https://proceedings.neurips.cc/paper_files/paper/2018/file/8b8388180314a337c9aa3c5aa8e2f37a-Paper.pdf)
  * [Metrics for Multi-Label Classification](https://mmuratarat.github.io/2020-01-25/multilabel_classification_metrics)
+## Classifier results visualization
+ * good overview: [Visual Comparison of Multi-label Classification Results](https://diglib.eg.org/bitstream/handle/10.2312/vmv20211367/017-026.pdf?sequence=1&isAllowed=y)
+ * Single-label multi-class classification [ComDia+](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8781593)
+ * Multi-lable classification [UnTangleMap](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7091015) - **can show only one result at a time**
+### Set-based visualizations
+ Label is set, data samples, to which label was assignet are elements of the set
+ * [UpSet]()
+ * [AggreSet]()
 ## Random stuff
  * [Transformer position as dynamical model](https://assets.amazon.science/f0/32/ff7d9669492bbe2dedb8ee3cb3e5/learning-to-encode-position-for-transformer-with-continuous-dunamical-model.pdf)
  * [Neural Ordinary Differential Equations](https://papers.nips.cc/paper_files/paper/2018/hash/69386f6bb1dfed68692a24c8686939b9-Abstract.html)
