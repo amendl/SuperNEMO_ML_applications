@@ -74,7 +74,8 @@ Trained models in TensorFlow format.
  * `front_my_generator ` - Number of tracks classifier viewing detector from front (`my_generator`)
  * `combined_my_generator ` - Top, side and front view combined usign transfer learning (`my_generator`)
 # Results
-* [Confusion matrix for combined model](./ImagesAndDocuments/combined.pdf)
+ * [Confusion matrix for combined model (SN-IEGenerator)](./ImagesAndDocuments/combined.pdf)
+ * [Confusion matrix for top model (my_generator)](./ImagesAndDocuments/top_model_my_generator_confusion_matrix.pdf)
 # Issues
  * sbatch and tensorflow sometimes fail to initialize libraries (mainly to source python from virtual environment or root) - start the script again
  * tensorflow sometimes runs out of memory - don't use checkpoints for tensorboard
