@@ -26,6 +26,12 @@ Optional:
  * `tensorboard_plugin_profile` - Should be part of `tensorflow`
  * `nvidia-pyindex`, `nvidia-tensorrt` - For TensorRT support
  * `nvidia-smi` -  For checking usage and available memory on NVIDIA V100 GPU (on CCLyon)
+
+## Working with real data
+We test models on real data and compared them with [TKEvent](https://github.com/TomasKrizak/TKEvent). Unfortunately, it is not possible to open `root` files produced by [TKEvent](https://github.com/TomasKrizak/TKEvent) library since this library might be built with different version of python and libstdc++. Fortunately, workaround exists. We need to download and build two versions of [TKEvent](https://github.com/TomasKrizak/TKEvent). First version will be built in the manner described in [TKEvent](https://github.com/TomasKrizak/TKEvent) README.md. The second library shoudl be build (we ignore the `red_to_tk` target) with following steps:
+ 1.`module add ROOT` where `ROOT` is version of `root` library used by `tensorflow`
+ 2. `TKEvent/TKEvent/install.sh` to build library 
+Now, we can use `red_to_tk` from the first library to obtain root file with `TKEvent` objects and open this root file with the second version of `TKEvent` library.
 ## Running scripts (on CCLyon in2p3 cluster)
 Example is at `example_exec.sh`. Run it with `sbatch --mem=... -n 1 -t ... gres=gpu:v100:N example_exec.sh` if you have access to GPU, where `N` is number of GPUs you want to use. Otherwise, leave out `gres` option.
 
@@ -81,7 +87,7 @@ Trained models in TensorFlow format.
  * [Confusion matrix for front model (my_generator)](./ImagesAndDocuments/front_model_my_generator_confusion_matrix.pdf)
  * [Confusion matrix for combined model (my_generator)](./ImagesAndDocuments/combined_model_my_generator_confusion_matrix.pdf)
 # Results (on real data)
- We tested models on real data and compared them with [TKEvent](https://github.com/TomasKrizak/TKEvent). TODO
+
 # Issues
  * sbatch and tensorflow sometimes fail to initialize libraries (mainly to source python from virtual environment or root) - start the script again
  * tensorflow sometimes runs out of memory - don't use checkpoints for tensorboard
