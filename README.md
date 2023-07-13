@@ -41,6 +41,7 @@ Scripts can use two strategies. To use only one GPU use option `--OneDeviceStrat
  * `number_of_tracks_classification3D.py` - TODO: Classification using Conv3D
  * `plot_confusion.py` - Script helping analyze badly classified events
  * `clustering_one.py`- example of custom trainig loop for GAN autoencoders used for clustering
+ * `multilabel_analysis.py` - script for analysing various aspect of multilabel classifier used for associated calorimeter hit detection
 ## `capsule`
  * `routing_by_agreement.py` - tensorflow.while_loop implementation of routing algorithm
  * `capsule_lib.py` - basic parts of CapsNET architecture
