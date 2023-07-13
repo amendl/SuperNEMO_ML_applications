@@ -1,7 +1,7 @@
 
 
 # Goals
- * Calculate number of tracks in event by CNN.
+ * Calculate number of tracks in event by CNN (1, 2, 3 or 4 tracks).
  * Use generative adversarial networks with convolutional autoencoders for track clustering.
  * Predict associated calorimeter hit(s) using single-label classification on clustered events or multi-label classification on not clustered events.
 # Software
@@ -73,12 +73,14 @@ Trained models in TensorFlow format.
  * `side_my_generator ` - Number of tracks classifier viewing detector from side (`my_generator`)
  * `front_my_generator ` - Number of tracks classifier viewing detector from front (`my_generator`)
  * `combined_my_generator ` - Top, side and front view combined usign transfer learning (`my_generator`)
-# Results
+# Results (trained and tested on SN-IEGenerator, my_generator)
  * [Confusion matrix for combined model (SN-IEGenerator)](./ImagesAndDocuments/combined.pdf)
  * [Confusion matrix for top model (my_generator)](./ImagesAndDocuments/top_model_my_generator_confusion_matrix.pdf)
  * [Confusion matrix for side model (my_generator)](./ImagesAndDocuments/side_model_my_generator_confusion_matrix.pdf)
  * [Confusion matrix for front model (my_generator)](./ImagesAndDocuments/front_model_my_generator_confusion_matrix.pdf)
  * [Confusion matrix for combined model (my_generator)](./ImagesAndDocuments/combined_model_my_generator_confusion_matrix.pdf)
+# Results (on real data)
+ We tested models on real data and compared them with [TKEvent](https://github.com/TomasKrizak/TKEvent). TODO
 # Issues
  * sbatch and tensorflow sometimes fail to initialize libraries (mainly to source python from virtual environment or root) - start the script again
  * tensorflow sometimes runs out of memory - don't use checkpoints for tensorboard
