@@ -20,6 +20,7 @@ This software should be installed in python or Anaconda environment (python envi
  * `maplotlib`, `seaborn`
  * `scikit-learn`
  * `pydot`, `graphviz`
+ * `argparse`
  
 Optional:
  * `tensorboard` - Should be part of `tensorflow`
