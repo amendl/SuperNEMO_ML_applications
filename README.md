@@ -45,6 +45,7 @@ Scripts can use two strategies. To use only one GPU use option `--OneDeviceStrat
 3. install [packages](#required-software) (if not done yet)
 4. load python virtual environment
 # Description of files
+ * `lib.py` -  small library with some functions that are reused across this project 
  * `number_of_tracks_classification.py`
  * `combined.py` - Script for constructing and training model consisting from `top`, `side` and `front` models.
  * `number_of_tracks_classification3D.py` - TODO: Classification using Conv3D
