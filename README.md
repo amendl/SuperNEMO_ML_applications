@@ -94,7 +94,7 @@ Trained models in TensorFlow format.
 
 # Issues
  * sbatch and tensorflow sometimes fail to initialize libraries (mainly to source python from virtual environment or root) - start the script again
- * tensorflow sometimes runs out of memory - don't use checkpoints for tensorboard
+ * tensorflow sometimes runs out of memory - Don't use checkpoints for tensorboard. Another cause of this problem might be training more models in one process, we can solve this by `keras.backend.clear_session()`. If this error occurs after several hours of program execution, check out function `tf.config.experimental.set_memory_growth`. 
 # Resources
 ## Convolutional neural networks and autoencoders
  * [Multi-label image classification](https://towardsdatascience.com/multi-label-image-classification-with-neural-network-keras-ddc1ab1afede)
@@ -129,6 +129,6 @@ Trained models in TensorFlow format.
  * [Transformer position as dynamical model](https://assets.amazon.science/f0/32/ff7d9669492bbe2dedb8ee3cb3e5/learning-to-encode-position-for-transformer-with-continuous-dunamical-model.pdf)
  * [Neural Ordinary Differential Equations](https://papers.nips.cc/paper_files/paper/2018/hash/69386f6bb1dfed68692a24c8686939b9-Abstract.html)
  * [Learning Jacobian Trace of Ordinary Differential Equation](https://arxiv.org/pdf/1810.01367)
-
+ * [INVERTIBLE SURROGATE MODELS FOR LASERWAKEFIELD ACCELERATION](https://simdl.github.io/files/32.pdf)
 ---
 If you have any questions feel free to contact me at [adam.mendl@cvut.cz](mailto:adam.mendl@cvut.cz) or [amendl@hotmail.com](mailto:amendl@hotmail.com).
