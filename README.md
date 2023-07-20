@@ -4,6 +4,13 @@
  * Calculate number of tracks in event by CNN (1, 2, 3 or 4 tracks).
  * Use generative adversarial networks with convolutional autoencoders for track clustering.
  * Predict associated calorimeter hit(s) using single-label classification on clustered events or multi-label classification on not clustered events.
+# Progress
+ * counting tracks done on ideal generator (works really well)
+ * first attempts to use ML while fitting on real data 
+   * has some issues - the generator will have to be probably slightly modified, and we should add noise
+   * we need to generate thicker tracks and and sometimes, when the track goes directly through the tracker cell, skip this cell
+ * asociated calorimeter hits practicaly finished (but will probably need the same enhancements as track counting)
+ * first parts of CapsNET layer
 # Software
 This should work without problems on CCLyon in2p3 computation cluster.
 ## Required software
@@ -84,6 +91,8 @@ Trained models in TensorFlow format.
  * `side_my_generator ` - Number of tracks classifier viewing detector from side (`my_generator`)
  * `front_my_generator ` - Number of tracks classifier viewing detector from front (`my_generator`)
  * `combined_my_generator ` - Top, side and front view combined usign transfer learning (`my_generator`)
+## `enhanced_fitting`
+First attempts to use ML to help [TKEvent](https://github.com/TomasKrizak/TKEvent).
 # Results (trained and tested on SN-IEGenerator, my_generator)
  * [Confusion matrix for combined model (SN-IEGenerator)](./ImagesAndDocuments/combined.pdf)
  * [Confusion matrix for top model (my_generator)](./ImagesAndDocuments/top_model_my_generator_confusion_matrix.pdf)
