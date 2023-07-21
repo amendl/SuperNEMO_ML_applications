@@ -41,6 +41,8 @@ We test models on real data and compared them with [TKEvent](https://github.com/
 1.`module add ROOT` where `ROOT` is version of `root` library used by `tensorflow`
 2. `TKEvent/TKEvent/install.sh` to build library 
 
+If the collaboration will want to use keras models inside software, the best way is probably to use [cppflow](https://github.com/serizba/cppflow) . It is single header c++ library for acessing TensoFlow C api. This means that we will not have to build TensorFlow from source and we should not be restricted by root/python/gcc/libstdc++ version nor calling conventions. 
+
 Now, we can use `red_to_tk` from the first library to obtain root file with `TKEvent` objects and open this root file with the second version of `TKEvent` library.
 ## Running scripts (on CCLyon in2p3 cluster)
 Example is at `example_exec.sh`. Run it with `sbatch --mem=... -n 1 -t ... gres=gpu:v100:N example_exec.sh` if you have access to GPU, where `N` is number of GPUs you want to use. Otherwise, leave out `gres` option.
@@ -93,6 +95,9 @@ Trained models in TensorFlow format.
  * `combined_my_generator ` - Top, side and front view combined usign transfer learning (`my_generator`)
 ## `enhanced_fitting`
 First attempts to use ML to help [TKEvent](https://github.com/TomasKrizak/TKEvent).
+ * 'TKEvent' - slightly modified [TKEvent](https://github.com/TomasKrizak/TKEvent) library.
+ * 'fit_one_iteratively.py' - uses ml to predict number of tracks and fits one track, removes associated tracker hits from event and repeats until the predicted tracks are fitted
+ * 'special_events.py' - can modify events and inspect differences between number of predicted tracks before modificatio and after
 # Results (trained and tested on SN-IEGenerator, my_generator)
  * [Confusion matrix for combined model (SN-IEGenerator)](./ImagesAndDocuments/combined.pdf)
  * [Confusion matrix for top model (my_generator)](./ImagesAndDocuments/top_model_my_generator_confusion_matrix.pdf)
