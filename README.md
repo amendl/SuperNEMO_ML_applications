@@ -11,10 +11,10 @@ You can look into `presentation` folder for less technicaly detailed overview.
    * we need to generate thicker tracks and and sometimes, when the track goes directly through the tracker cell, skip this cell
  * asociated calorimeter hits practicaly finished (but will probably need the same enhancements as track counting)
  * first parts of CapsNET layer
-# Software
-This should work without problems on CCLyon in2p3 computation cluster.
 # Help needed from collaboration
 Currently none ;)
+# Software
+This should work without problems on CCLyon in2p3 computation cluster.
 ## Required software
 Almost everything runs ot top of `python3`. On CCLyon use `python` sourced with `root` via
 1. `ccenv root 6.22.06` - loads `python 3.8.6` (**does not work now**)
