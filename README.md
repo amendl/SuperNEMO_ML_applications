@@ -1,5 +1,5 @@
 
-
+You can look into `presentation` folder for less technicaly detailed overview.
 # Goals
  * Calculate number of tracks in event by CNN (1, 2, 3 or 4 tracks).
  * Use generative adversarial networks with convolutional autoencoders for track clustering.
