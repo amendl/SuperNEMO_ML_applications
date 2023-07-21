@@ -13,6 +13,8 @@ You can look into `presentation` folder for less technicaly detailed overview.
  * first parts of CapsNET layer
 # Software
 This should work without problems on CCLyon in2p3 computation cluster.
+# Help needed from collaboration
+Currently none ;)
 ## Required software
 Almost everything runs ot top of `python3`. On CCLyon use `python` sourced with `root` via
 1. `ccenv root 6.22.06` - loads `python 3.8.6` (**does not work now**)
