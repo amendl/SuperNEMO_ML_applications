@@ -8,6 +8,7 @@ You can look into `presentation` folder for less technicaly detailed overview.
  * Currently discussing with Tomas how to incorporate ML into his fitting algorithm.
  * Tested track counting model on real data. Summary of all efforts is that the model adapts **pretty well** on measured data. 
  * First parts of CapsNET layer, hoping to finish this soon.
+ * **Currently working on autoencoders**
 ## Calculating number of tracks
  * Counting tracks done on ideal generator (works really well).
  * Tested on real data, two main problems:
@@ -80,7 +81,6 @@ If the collaboration will want to use keras models inside software, the best way
  * sbatch and tensorflow sometimes fail to initialize libraries (mainly to source python from virtual environment or root) - start the script again
  * tensorflow sometimes runs out of memory - Don't use checkpoints for tensorboard. Another cause of this problem might be training more models in one process, we can solve this by `keras.backend.clear_session()`. If this error occurs after several hours of program execution, check out function `tf.config.experimental.set_memory_growth`. 
  * https://github.com/tensorflow/tensorflow/issues/61314
-
 # Description of files
  * `lib.py` -  small library with some functions that are reused across this project 
  * `number_of_tracks_classification.py`
@@ -158,7 +158,7 @@ First attempts to use ML to help [TKEvent](https://github.com/TomasKrizak/TKEven
  * [Dense layer in keras (how to build custom keras model)](https://github.com/keras-team/keras/blob/v2.12.0/keras/layers/core/dense.py)
  * [Tricks for custom layers](https://oliver-k-ernst.medium.com/a-cheat-sheet-for-custom-tensorflow-layers-and-models-aa465df2bc8b)
 ## Classification
- * [Facebook, Instagram: Exploring the Limits of Weakly Supervised Pretraining](https://arxiv.org/pdf/1805.00932.pdf) - [Discussion #1](https://stats.stackexchange.com/questions/433867/why-is-softmax-considered-counter-intuitive-for-multi-label-classification), [Discussion #2](https://stackoverflow.com/questions/66990074/using-softmax-for-multilabel-classification-as-per-facebook-paper)
+ * [Meta, Instagram: Exploring the Limits of Weakly Supervised Pretraining](https://arxiv.org/pdf/1805.00932.pdf) - [Discussion #1](https://stats.stackexchange.com/questions/433867/why-is-softmax-considered-counter-intuitive-for-multi-label-classification), [Discussion #2](https://stackoverflow.com/questions/66990074/using-softmax-for-multilabel-classification-as-per-facebook-paper)
    * how to use softmax for multi-label classification
  * [Bags of Tricks for Multi-Label Classification](https://andy-wang.medium.com/bags-of-tricks-for-multi-label-classification-dc54b87f79ec)
  * [Discussion about Tensorflow losses](https://stats.stackexchange.com/questions/207794/what-loss-function-for-multi-class-multi-label-classification-tasks-in-neural-n)
@@ -173,6 +173,7 @@ First attempts to use ML to help [TKEvent](https://github.com/TomasKrizak/TKEven
  * [UpSet]()
  * [AggreSet]()
 ## Random stuff
+ * [Overview of conditional random fields](https://medium.com/ml2vec/overview-of-conditional-random-fields-68a2a20fa541)
  * [Transformer position as dynamical model](https://assets.amazon.science/f0/32/ff7d9669492bbe2dedb8ee3cb3e5/learning-to-encode-position-for-transformer-with-continuous-dunamical-model.pdf)
  * [Neural Ordinary Differential Equations](https://papers.nips.cc/paper_files/paper/2018/hash/69386f6bb1dfed68692a24c8686939b9-Abstract.html)
  * [Learning Jacobian Trace of Ordinary Differential Equation](https://arxiv.org/pdf/1810.01367)
