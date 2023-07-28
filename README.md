@@ -13,10 +13,11 @@ You can look into `presentation` folder for less technicaly detailed overview.
  * Tested on real data, two main problems:
    1. isolated tracker hits are detected as one track,
    2. if the z position of tracker hit cannot be computed, then it is set to zero. Side and Front views of this model detect those as aditional track
- * Primitive solutions applied (use only top view and filter isolated tracker hits). The results are [here](./ImagesAndDocuments/top_model_classification) (format of files {event_no}\_predicted\_{number_of_predicted_tracks}.*).
+ * Primitive solutions applied (use only top view and filter isolated tracker hits). See "Results" section.
  * Reformulation of this problem to finding number of **linear segments** might be helful. This means add kinks to generator and possibly fine tune model on physical simulations (Falaise).
 ## Technical stuff
-  * The way to add tensorflow into binaries of TKEvent was found. It will only reqire c api for TensorFlow which can be downloaded from TensorFlow webside and links dynamically to analysation code. It might be even possible to use this solution within root macros (i.e. running code via `root <filename>.cxx`). For more information, see "Working with real data (future-proof)" section.
+The way to add tensorflow into binaries of TKEvent was found. It will only reqire c api for TensorFlow which can be downloaded from TensorFlow webside and links dynamically to analysation code. It might be even possible to use this solution within root macros (i.e. running code via `root <filename>.cxx`). For more information, see "Working with real data (future-proof)" section.
+
 **From now, this section is only about results on generator**
  ## Associated calorimeter hits
  * Performance depends on number of tracks in event. For one track, we have 98% accuracy. For more tracks, it is multilabel classification problem, which is much more harder to analyse and measure performance for.
@@ -24,12 +25,12 @@ You can look into `presentation` folder for less technicaly detailed overview.
 Three strategies proposed:
  1. Approach by Matteo (basically SegNET architecture - see resources in the end of this document) enhanced by Generative Adversarial Networks.
  2. Train simple autoencoder. Then, disconnect decoder and use only encoder. The clustering/image segmentation will be done within latent space (output of encoder). It means that we will generate latent representation of event (r1), then we will generate latent representation of event without one track (r2) and train model to go from (r1) to (r2). if we want to see clustered event, we can push the modified image latent representation into decoder.
-   * Cannot find simple resources about image segmentation within latent space (only really complicated modern foundation models which are definitely overkill for SuperNEMO tracker).
-   * Will be beneficial only if the latent space is small.
-   * Some results from fitting givethe idea that this will not work (see next subsection).
+     * Cannot find simple resources about image segmentation within latent space (only really complicated modern foundation models which are definitely overkill for SuperNEMO tracker).
+     * Will be beneficial only if the latent space is small.
+     * Some results from fitting givethe idea that this will not work (see next subsection).
  3. Model (basically one layer with convolutional filters) with two channels as input. One channel wil be the actual event and the second will be the track that we are clustering. 
 ## Fitting
- * Trying to give hint to TKEvent, where should search for solution (angle, position on foil)
+ * Trying to give hint to TKEvent, where should search for solution (angle - 5 segments, position on foil - 10 segments)
  * Mixed results: For one track we have approximately 70% accuracy (see "Results" section). Then it falls for events with more tracks.
 # Help needed from collaboration
  * Information about kinks.
@@ -75,6 +76,10 @@ We test models on real data and compared them with [TKEvent](https://github.com/
 Now, we can use `red_to_tk` from the first library to obtain root file with `TKEvent` objects and open this root file with the second version of `TKEvent` library.
 ## Working with real data (future-proof)
 If the collaboration will want to use keras models inside software, the best way is probably to use [cppflow](https://github.com/serizba/cppflow) . It is single header c++ library for acessing TensoFlow C api. This means that we will not have to build TensorFlow from source and we should not be restricted by root/python/gcc/libstdc++ version nor calling conventions. 
+## Issues
+ * sbatch and tensorflow sometimes fail to initialize libraries (mainly to source python from virtual environment or root) - start the script again
+ * tensorflow sometimes runs out of memory - Don't use checkpoints for tensorboard. Another cause of this problem might be training more models in one process, we can solve this by `keras.backend.clear_session()`. If this error occurs after several hours of program execution, check out function `tf.config.experimental.set_memory_growth`. 
+ * https://github.com/tensorflow/tensorflow/issues/61314
 
 # Description of files
  * `lib.py` -  small library with some functions that are reused across this project 
@@ -127,18 +132,21 @@ First attempts to use ML to help [TKEvent](https://github.com/TomasKrizak/TKEven
  * [Confusion matrix for side model (my_generator)](./ImagesAndDocuments/side_model_my_generator_confusion_matrix.pdf)
  * [Confusion matrix for front model (my_generator)](./ImagesAndDocuments/front_model_my_generator_confusion_matrix.pdf)
  * [Confusion matrix for combined model (my_generator)](./ImagesAndDocuments/combined_model_my_generator_confusion_matrix.pdf)
+ * [Confusion matrix for prediction of angle from top view (my_generator)](./ImagesAndDocuments/angle_1_confusion.pdf)
 # Results (on real data)
-
-# Issues
- * sbatch and tensorflow sometimes fail to initialize libraries (mainly to source python from virtual environment or root) - start the script again
- * tensorflow sometimes runs out of memory - Don't use checkpoints for tensorboard. Another cause of this problem might be training more models in one process, we can solve this by `keras.backend.clear_session()`. If this error occurs after several hours of program execution, check out function `tf.config.experimental.set_memory_growth`. 
- * https://github.com/tensorflow/tensorflow/issues/61314
+ * [Prediction of number of tracks on real data](./ImagesAndDocuments/top_model_classification)
+   * only top view
+   * run 974
+   * Top model predicted number of tracks and [TKEvent](https://github.com/TomasKrizak/TKEvent) tried to fit this number of events.
+   * isolated tracker hits filtered
 # Resources
 ## Convolutional neural networks, autoencoders and GANs
  * [Multi-label image classification](https://towardsdatascience.com/multi-label-image-classification-with-neural-network-keras-ddc1ab1afede)
  * [Deep Convolutional Generative Adversarial Network](https://www.tensorflow.org/tutorials/generative/dcgan)
  * [Building a simple Generative Adversarial Network (GAN) using TensorFlow](https://blog.paperspace.com/implementing-gans-in-tensorflow/)
  * [NIPS 2016 Tutorial: Generative Adversarial Networks](https://arxiv.org/pdf/1701.00160.pdf)
+## Image Segmentation (clustering tracker hits)
+ * [Image Segmentation Using Deep Learning: A Survey](https://arxiv.org/pdf/2001.05566.pdf)
  * [SegNET](https://arxiv.org/pdf/1511.00561.pdf)
 ## CapsNET
  * [Series of articles on Capsule architecture](https://pechyonkin.me/capsules-1/)
