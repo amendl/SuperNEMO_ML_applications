@@ -1,5 +1,7 @@
 
 You can look into `presentation` folder for less technicaly detailed overview.
+
+Note that if we write about clustering, we are writing about image segmentation.
 # Goals
  * Calculate number of tracks in event by CNN (1, 2, 3 or 4 tracks).
  * Use generative adversarial networks with convolutional autoencoders for track clustering.
@@ -10,14 +12,14 @@ You can look into `presentation` folder for less technicaly detailed overview.
  * First parts of CapsNET layer, hoping to finish this soon.
  * **Currently working on autoencoders**
 ## Calculating number of tracks
- * Counting tracks done on ideal generator (works really well).
+ * Counting tracks done on my_generator (works really well). It removes the problem that [SN-IEGenerator](https://github.com/SuperNEMO-DBD/SN-IEgenerator) sometimes generates event with less tracks.
  * Tested on real data, two main problems:
    1. isolated tracker hits are detected as one track,
    2. if the z position of tracker hit cannot be computed, then it is set to zero. Side and Front views of this model detect those as aditional track
- * Primitive solutions applied (use only top view and filter isolated tracker hits). See "Results" section.
- * Reformulation of this problem to finding number of **linear segments** might be helful. This means add kinks to generator and possibly fine tune model on physical simulations (Falaise).
+ * Primitive solutions applied (use only top view and filter isolated tracker hits) and then it works well. See "Results" section.
+ * Reformulation of this task to finding number of **linear segments** might be useful. This means add kinks to generator and possibly fine tune models on physical simulations (Falaise).
 ## Technical stuff
-The way to add tensorflow into binaries of TKEvent was found. It will only reqire c api for TensorFlow which can be downloaded from TensorFlow webside and links dynamically to analysation code. It might be even possible to use this solution within root macros (i.e. running code via `root <filename>.cxx`). For more information, see "Working with real data (future-proof)" section.
+The way to add tensorflow into binaries into [TKEvent](https://github.com/TomasKrizak/TKEvent) was found. It will only reqire c api for TensorFlow which can be downloaded from TensorFlow webside and links dynamically to analysation code. It might be even possible to use this solution within root macros (i.e. running code via `root <filename>.cxx`). For more information, see "Working with real data (future-proof)" section.
 
 **From now, this section is only about results on generator**
  ## Associated calorimeter hits
@@ -31,56 +33,59 @@ Three strategies proposed:
      * Some results from fitting givethe idea that this will not work (see next subsection).
  3. Model (basically one layer with convolutional filters) with two channels as input. One channel wil be the actual event and the second will be the track that we are clustering. 
 ## Fitting
- * Trying to give hint to TKEvent, where should search for solution (angle - 5 segments, position on foil - 10 segments)
+ * Trying to give hint to [TKEvent](https://github.com/TomasKrizak/TKEvent), where it should search for solution (angle - 5 segments, position on foil - 10 segments)
  * Mixed results: For one track we have approximately 70% accuracy (see "Results" section). Then it falls for events with more tracks.
 # Help needed from collaboration
  * Information about kinks.
 # Software
-Information in this section are motly for CCLyon in2p3 computation cluster.
+Information in this section are mostly for CCLyon in2p3 computation cluster.
 ## Required software
 Almost everything runs ot top of `python3`. On CCLyon use `python` sourced with `root` via
 1. `ccenv root 6.22.06` - loads `python 3.8.6` (**does not work now**)
 2. since July 12 2023 `module add Analysis/root/6.22.06-fix01` - loads `python 3.9.1` (**currently, this is the way to go**)
 
 This software should be installed in python or Anaconda environment (python environment is prefered since it can access  both sourced root package and all gpu related software directly, however it is still possible to make it work with Anaconda)
- * `Root` - Root is not needed to be explicitly installed in python or Anaconda environment, any sourced Root on CCLyon should work - minimum tested verion 6.22.06 (since July 12 2023 6.22.06-fix01 on CCLyon)
+ * `root` - Root is not needed to be explicitly installed in python or Anaconda environment, any sourced Root on CCLyon should work - minimum tested verion 6.22.06 (since July 12 2023 6.22.06-fix01 on CCLyon). **PyROOT is required.**
  * `cudatoolkit`, `cudnn` - Should be already installed on CCLyon 
  * `tensorflow`
  * `keras` - Should be part of `tensorflow`
+ * `keras-tuner` - hyperparameter tuning
  * `numpy`
- * `maplotlib`, `seaborn`
- * `scikit-learn`
- * `pydot`, `graphviz`
+ * `maplotlib`, `seaborn` - plotting
+ * `scikit-learn` - some helper functions
+ * `pydot`, `graphviz` - drawing models
  * `argparse`
  
 Optional:
  * `tensorboard` - Should be part of `tensorflow`
- * `tensorboard_plugin_profile`
+ * `tensorboard_plugin_profile` - profiling
  * `nvidia-pyindex`, `nvidia-tensorrt` - For TensorRT support
  * `nvidia-smi` -  For checking usage and available memory on NVIDIA V100 GPU (on CCLyon)
 
 ## Running scripts (on CCLyon in2p3 cluster)
-Example is at `example_exec.sh`. Run it with `sbatch --mem=... -n 1 -t ... gres=gpu:v100:N example_exec.sh` if you have access to GPU, where `N` is number of GPUs you want to use. Otherwise, leave out `gres` option.
+Example is at `example_exec.sh`. Run it with `sbatch --mem=... -n 1 -t ... gres=gpu:v100:N example_exec.sh` if you have access to GPU, where `N` is number of GPUs you want to use (currently CCLyon does not allow me to use more than three of them) Otherwise, leave out `gres` option.
 
 Scripts can use two strategies. To use only one GPU use option `--OneDeviceStrategy "/gpu:0"`. If you want to use more GPUs, use for example `--MirroredStrategy "/gpu:0" "/gpu:1" "/gpu:2"`.
+
+If you start job from bash instance with some packages, modules or virtual environment loaded, you should unload them/deactivate them (use `module purge --force`). Best way is to start from fresh bash instance.
 ## Workflow overview
-1. source `python` and `root` -  `module add Analysis/root/6.22.06-fix01`
+1. source `root` (and `python`) - **currently use `module add Analysis/root/6.22.06-fix01`**
 2. create python virtual environment (if not done yet) 
 3. install [packages](#required-software) (if not done yet)
 4. load python virtual environment
 ## Working with real data (temporary solution)
 We test models on real data and compared them with [TKEvent](https://github.com/TomasKrizak/TKEvent). Unfortunately, it is not possible to open `root` files produced by [TKEvent](https://github.com/TomasKrizak/TKEvent) library since this library might be built with different version of python and libstdc++. Fortunately, workaround exists. We need to download and build two versions of [TKEvent](https://github.com/TomasKrizak/TKEvent). First version will be built in the manner described in [TKEvent](https://github.com/TomasKrizak/TKEvent) README.md. The second library shoudl be build (we ignore the `red_to_tk` target) with following steps:
 
-1.`module add ROOT` where `ROOT` is version of `root` library used by `tensorflow`
-2.`TKEvent/TKEvent/install.sh` to build library 
+1. `module add ROOT` where `ROOT` is version of `root` library used by `tensorflow` (**currently `module add Analysis/root/6.22.06-fix01`**)
+2. `TKEvent/TKEvent/install.sh` to build library 
 
 Now, we can use `red_to_tk` from the first library to obtain root file with `TKEvent` objects and open this root file with the second version of `TKEvent` library.
 ## Working with real data (future-proof)
 If the collaboration will want to use keras models inside software, the best way is probably to use [cppflow](https://github.com/serizba/cppflow) . It is single header c++ library for acessing TensoFlow C api. This means that we will not have to build TensorFlow from source and we should not be restricted by root/python/gcc/libstdc++ version nor calling conventions. 
 ## Issues
- * sbatch and tensorflow sometimes fail to initialize libraries (mainly to source python from virtual environment or root) - start the script again
- * tensorflow sometimes runs out of memory - Don't use checkpoints for tensorboard. Another cause of this problem might be training more models in one process, we can solve this by `keras.backend.clear_session()`. If this error occurs after several hours of program execution, check out function `tf.config.experimental.set_memory_growth`. 
- * https://github.com/tensorflow/tensorflow/issues/61314
+ 1. `sbatch` and `tensorflow` sometimes fail to initialize libraries (mainly to source python from virtual environment or root) - start the script again ideally from new bash instance without any modules nor virtual environment loaded.
+ 2. `tensorflow` sometimes runs out of memory - Don't use checkpoints for `tensorboard`. Another cause of this problem might be training more models in one process, we can solve this by `keras.backend.clear_session()`. If this error occurs after several hours of program execution, check out function `tf.config.experimental.set_memory_growth`. 
+ 3. TensorFlow 2.13 distributed training fail - https://github.com/tensorflow/tensorflow/issues/61314
 # Description of files
  * `lib.py` -  small library with some functions that are reused across this project 
  * `number_of_tracks_classification.py`
@@ -93,11 +98,19 @@ If the collaboration will want to use keras models inside software, the best way
  * `routing_by_agreement.py` - tensorflow.while_loop implementation of routing algorithm
  * `capsule_lib.py` - basic parts of CapsNET architecture
 ## `architectures`
- * `top`
- * `side`
- * `front`
- * `generator` - Generator used in GAN architecture
- * `discriminator` - Discriminator used in GAN architecture
+ * `top.py`
+ * `top_big.py`
+ * `side.py`
+ * `front.py`
+ * `combined.py` - code generating combined model
+ * `top_associated_calorimeter.py`
+ * `front_associated_calorimeter.py`
+ * `side_associated_calorimeter.py`
+ * `generator.py` - Generator used in GAN architecture
+ * `discriminator.py` - Discriminator used in GAN architecture
+ * `matteo_with_skip_connections.py` - Autoencoder for clustering proposed and tested by Matteo (don't know exactly what the results are and if it was working at all). In fact, it is modified SegNET (see "Resources" section).
+  * `matteo_without_skip_connections.py` - The same as above but the skip connections are removed. This should not work for clustering, but it will work as autoencoder.
+
 ## `Generator`
 This folder contains files from [SN-IEGenerator](https://github.com/SuperNEMO-DBD/SN-IEgenerator) (version from Mar 7, 2018) that were modified for out project. 
  * `toyhaystack.py` - Clustering of hits into tracks added.
@@ -126,18 +139,20 @@ First attempts to use ML to help [TKEvent](https://github.com/TomasKrizak/TKEven
  * 'TKEvent' - slightly modified [TKEvent](https://github.com/TomasKrizak/TKEvent) library.
  * 'fit_one_iteratively.py' - uses ml to predict number of tracks and fits one track, removes associated tracker hits from event and repeats until the predicted tracks are fitted
  * 'special_events.py' - can modify events and inspect differences between number of predicted tracks before modificatio and after
-# Results (trained and tested on SN-IEGenerator, my_generator)
+# Results 
+## SN-IEGenerator, my_generator
  * [Confusion matrix for combined model (SN-IEGenerator)](./ImagesAndDocuments/combined.pdf)
  * [Confusion matrix for top model (my_generator)](./ImagesAndDocuments/top_model_my_generator_confusion_matrix.pdf)
  * [Confusion matrix for side model (my_generator)](./ImagesAndDocuments/side_model_my_generator_confusion_matrix.pdf)
  * [Confusion matrix for front model (my_generator)](./ImagesAndDocuments/front_model_my_generator_confusion_matrix.pdf)
  * [Confusion matrix for combined model (my_generator)](./ImagesAndDocuments/combined_model_my_generator_confusion_matrix.pdf)
  * [Confusion matrix for prediction of angle from top view (my_generator)](./ImagesAndDocuments/angle_1_confusion.pdf)
-# Results (on real data)
+ * [Autoencoders result]()
+## Real data
  * [Prediction of number of tracks on real data](./ImagesAndDocuments/top_model_classification)
    * only top view
    * run 974
-   * Top model predicted number of tracks and [TKEvent](https://github.com/TomasKrizak/TKEvent) tried to fit this number of events.
+   * Top model predicted number of tracks and [TKEvent](https://github.com/TomasKrizak/TKEvent) tried to fit this number of tracks/linear segments.
    * isolated tracker hits filtered
 # Resources
 ## Convolutional neural networks, autoencoders and GANs
