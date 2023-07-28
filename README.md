@@ -5,16 +5,36 @@ You can look into `presentation` folder for less technicaly detailed overview.
  * Use generative adversarial networks with convolutional autoencoders for track clustering.
  * Predict associated calorimeter hit(s) using single-label classification on clustered events or multi-label classification on not clustered events.
 # Progress
- * counting tracks done on ideal generator (works really well)
- * first attempts to use ML while fitting on real data 
-   * has some issues - the generator will have to be probably slightly modified, and we should add noise
-   * we need to generate thicker tracks and and sometimes, when the track goes directly through the tracker cell, skip this cell
- * asociated calorimeter hits practicaly finished (but will probably need the same enhancements as track counting)
- * first parts of CapsNET layer
+ * Currently discussing with Tomas how to incorporate ML into his fitting algorithm.
+ * Tested track counting model on real data. Summary of all efforts is that the model adapts **pretty well** on measured data. 
+ * First parts of CapsNET layer, hoping to finish this soon.
+## Calculating number of tracks
+ * Counting tracks done on ideal generator (works really well).
+ * Tested on real data, two main problems:
+   1. isolated tracker hits are detected as one track,
+   2. if the z position of tracker hit cannot be computed, then it is set to zero. Side and Front views of this model detect those as aditional track
+ * Primitive solutions applied (use only top view and filter isolated tracker hits). The results are [here](./ImagesAndDocuments/top_model_classification) (format of files {event_no}\_predicted\_{number_of_predicted_tracks}.*).
+ * Reformulation of this problem to finding number of **linear segments** might be helful. This means add kinks to generator and possibly fine tune model on physical simulations (Falaise).
+## Technical stuff
+  * The way to add tensorflow into binaries of TKEvent was found. It will only reqire c api for TensorFlow which can be downloaded from TensorFlow webside and links dynamically to analysation code. It might be even possible to use this solution within root macros (i.e. running code via `root <filename>.cxx`). For more information, see "Working with real data (future-proof)" section.
+**From now, this section is only about results on generator**
+ ## Associated calorimeter hits
+ * Performance depends on number of tracks in event. For one track, we have 98% accuracy. For more tracks, it is multilabel classification problem, which is much more harder to analyse and measure performance for.
+ ## Clustering
+Three strategies proposed:
+ 1. Approach by Matteo (basically SegNET architecture - see resources in the end of this document) enhanced by Generative Adversarial Networks.
+ 2. Train simple autoencoder. Then, disconnect decoder and use only encoder. The clustering/image segmentation will be done within latent space (output of encoder). It means that we will generate latent representation of event (r1), then we will generate latent representation of event without one track (r2) and train model to go from (r1) to (r2). if we want to see clustered event, we can push the modified image latent representation into decoder.
+   * Cannot find simple resources about image segmentation within latent space (only really complicated modern foundation models which are definitely overkill for SuperNEMO tracker).
+   * Will be beneficial only if the latent space is small.
+   * Some results from fitting givethe idea that this will not work (see next subsection).
+ 3. Model (basically one layer with convolutional filters) with two channels as input. One channel wil be the actual event and the second will be the track that we are clustering. 
+## Fitting
+ * Trying to give hint to TKEvent, where should search for solution (angle, position on foil)
+ * Mixed results: For one track we have approximately 70% accuracy (see "Results" section). Then it falls for events with more tracks.
 # Help needed from collaboration
-Currently none ;)
+ * Information about kinks.
 # Software
-This should work without problems on CCLyon in2p3 computation cluster.
+Information in this section are motly for CCLyon in2p3 computation cluster.
 ## Required software
 Almost everything runs ot top of `python3`. On CCLyon use `python` sourced with `root` via
 1. `ccenv root 6.22.06` - loads `python 3.8.6` (**does not work now**)
@@ -114,11 +134,12 @@ First attempts to use ML to help [TKEvent](https://github.com/TomasKrizak/TKEven
  * tensorflow sometimes runs out of memory - Don't use checkpoints for tensorboard. Another cause of this problem might be training more models in one process, we can solve this by `keras.backend.clear_session()`. If this error occurs after several hours of program execution, check out function `tf.config.experimental.set_memory_growth`. 
  * https://github.com/tensorflow/tensorflow/issues/61314
 # Resources
-## Convolutional neural networks and autoencoders
+## Convolutional neural networks, autoencoders and GANs
  * [Multi-label image classification](https://towardsdatascience.com/multi-label-image-classification-with-neural-network-keras-ddc1ab1afede)
  * [Deep Convolutional Generative Adversarial Network](https://www.tensorflow.org/tutorials/generative/dcgan)
  * [Building a simple Generative Adversarial Network (GAN) using TensorFlow](https://blog.paperspace.com/implementing-gans-in-tensorflow/)
  * [NIPS 2016 Tutorial: Generative Adversarial Networks](https://arxiv.org/pdf/1701.00160.pdf)
+ * [SegNET](https://arxiv.org/pdf/1511.00561.pdf)
 ## CapsNET
  * [Series of articles on Capsule architecture](https://pechyonkin.me/capsules-1/)
  * [Preprint on routing algorithm (Capsule architecture)](https://arxiv.org/abs/1710.09829)
