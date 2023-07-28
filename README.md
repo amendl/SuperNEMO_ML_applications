@@ -2,6 +2,10 @@
 You can look into `presentation` folder for less technicaly detailed overview.
 
 Note that if we write about clustering, we are writing about image segmentation.
+
+If you have any questions feel free to contact me at [adam.mendl@cvut.cz](mailto:adam.mendl@cvut.cz) or [amendl@hotmail.com](mailto:amendl@hotmail.com).
+
+---
 # Goals
  * Calculate number of tracks in event by CNN (1, 2, 3 or 4 tracks).
  * Use generative adversarial networks with convolutional autoencoders for track clustering.
@@ -95,7 +99,7 @@ If the collaboration will want to use keras models inside software, the best way
  * `clustering_one.py`- example of custom trainig loop for GAN autoencoders used for clustering
  * `multilabel_analysis.py` - script for analysing various aspect of multilabel classifier used for associated calorimeter hit detection
 ## `capsule`
- * `routing_by_agreement.py` - tensorflow.while_loop implementation of routing algorithm
+ * `routing_by_agreement.py` - `tensorflow.while_loop` implementation of routing algorithm
  * `capsule_lib.py` - basic parts of CapsNET architecture
 ## `architectures`
  * `top.py`
@@ -193,5 +197,4 @@ First attempts to use ML to help [TKEvent](https://github.com/TomasKrizak/TKEven
  * [Neural Ordinary Differential Equations](https://papers.nips.cc/paper_files/paper/2018/hash/69386f6bb1dfed68692a24c8686939b9-Abstract.html)
  * [Learning Jacobian Trace of Ordinary Differential Equation](https://arxiv.org/pdf/1810.01367)
  * [INVERTIBLE SURROGATE MODELS FOR LASERWAKEFIELD ACCELERATION](https://simdl.github.io/files/32.pdf)
----
-If you have any questions feel free to contact me at [adam.mendl@cvut.cz](mailto:adam.mendl@cvut.cz) or [amendl@hotmail.com](mailto:amendl@hotmail.com).
+
