@@ -27,7 +27,7 @@ The way to add tensorflow into binaries into [TKEvent](https://github.com/TomasK
 
 **From now, this section is only about results on generator**
  ## Associated calorimeter hits
- * Performance depends on number of tracks in event. For one track, we have 98% accuracy. For more tracks, it is multilabel classification problem, which is much more harder to analyse and measure performance for.
+ * Performance depends on number of tracks in event. For one track, we have 98% accuracy. For more tracks, it is multilabel classification problem, which is much more harder to analyse and measure performance for. However, we can say that multilabel classification approach from Meta Research (Softmax on one hot encoding divided by number of tracks) performs significantly better than classical approach with BinaryCrossentropy. However associated calohit without clustering is probably useless and if we have working clustering, we can then us single label classifcation on one track.
  ## Clustering
 Three strategies proposed:
  1. Approach by Matteo (basically SegNET architecture - see resources in the end of this document) enhanced by Generative Adversarial Networks.
@@ -36,6 +36,12 @@ Three strategies proposed:
      * Will be beneficial only if the latent space is small.
      * Some results from fitting givethe idea that this will not work (see next subsection).
  3. Model (basically one layer with convolutional filters) with two channels as input. One channel wil be the actual event and the second will be the track that we are clustering. 
+### Generative Adversarial Networks
+Testing clustering on events 
+Convolutional autoencoder with several output neurons trained on classification tasks:
+ 1. is significant number of hits in the track no. 2 missing?
+ 2. is significant number of hits in the track no. 1 present?
+ 3. and possibly any other criterion where the generator would be failing.
 ## Fitting
  * Trying to give hint to [TKEvent](https://github.com/TomasKrizak/TKEvent), where it should search for solution (angle - 5 segments, position on foil - 10 segments)
  * Mixed results: For one track we have approximately 70% accuracy (see "Results" section). Then it falls for events with more tracks.
