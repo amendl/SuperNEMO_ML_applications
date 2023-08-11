@@ -1,7 +1,7 @@
 
 You can look into `presentation` folder for less technicaly detailed overview.
 
-Note that if we write about clustering, we are writing about image segmentation.
+Note that if we are writing about **clustering tracker hits**, we are writing about image segmentation int the terms of ML community.
 
 If you have any questions feel free to contact me at [adam.mendl@cvut.cz](mailto:adam.mendl@cvut.cz) or [amendl@hotmail.com](mailto:amendl@hotmail.com).
 
@@ -20,14 +20,15 @@ If you have any questions feel free to contact me at [adam.mendl@cvut.cz](mailto
  * Tested on real data, two main problems:
    1. isolated tracker hits are detected as one track,
    2. if the z position of tracker hit cannot be computed, then it is set to zero. Side and Front views of this model detect those as aditional track
- * Primitive solutions applied (use only top view and filter isolated tracker hits) and then it works well. See "Results" section.
+ * Primitive solutions applied (use only top view and filter isolated tracker hits) and then it works well. See [Results](#results) section.
  * Reformulation of this task to finding number of **linear segments** might be useful. This means add kinks to generator and possibly fine tune models on physical simulations (Falaise).
 ## Technical stuff
 The way to add tensorflow into binaries into [TKEvent](https://github.com/TomasKrizak/TKEvent) was found. It will only reqire c api for TensorFlow which can be downloaded from TensorFlow webside and links dynamically to analysation code. It might be even possible to use this solution within root macros (i.e. running code via `root <filename>.cxx`). For more information, see "Working with real data (future-proof)" section.
 
 **From now, this section is only about results on generator**
  ## Associated calorimeter hits
- * Performance depends on number of tracks in event. For one track, we have 98% accuracy. For more tracks, it is multilabel classification problem, which is much more harder to analyse and measure performance for. However, we can say that multilabel classification approach from Meta Research (Softmax on one hot encoding divided by number of tracks) performs significantly better than classical approach with BinaryCrossentropy. However associated calohit without clustering is probably useless and if we have working clustering, we can then us single label classifcation on one track.
+ * Performance depends on number of tracks in event. For one track, we have 98% accuracy. For more tracks, it is multilabel classification problem, which is much more harder to analyse and measure performance for. However, we can say that multilabel classification approach from Meta Research (Softmax on one hot encoding divided by number of tracks) performs significantly better than classical approach with BinaryCrossentropy. See [Results](#results) section.
+ * However associated calohit without clustering is probably useless and if we have working clustering, we can then us single label classifcation on one track.
  ## Clustering
 Three strategies proposed:
  1. Approach by Matteo (basically SegNET architecture - see resources in the end of this document) enhanced by Generative Adversarial Networks.
@@ -35,16 +36,21 @@ Three strategies proposed:
      * Cannot find simple resources about image segmentation within latent space (only really complicated modern foundation models which are definitely overkill for SuperNEMO tracker).
      * Will be beneficial only if the latent space is small.
      * Some results from fitting givethe idea that this will not work (see next subsection).
+     * Some of these problems might be resolved by using **Variational autoencoder**.
  3. Model (basically one layer with convolutional filters) with two channels as input. One channel wil be the actual event and the second will be the track that we are clustering. 
 ### Generative Adversarial Networks
+In literature, the approach of learning similarity metrics in GAN manner is called (V)AE/GAN depending on whether autoencoder is variational. See for example [Autoencoding beyond pixels using a learned similarity metric](https://arxiv.org/pdf/1512.09300.pdf).
+
 Testing clustering on events 
-Convolutional autoencoder with several output neurons trained on classification tasks:
+Convolutional autoencoder with output neuron trained on classification tasks:
  1. is significant number of hits in the track no. 2 missing?
  2. is significant number of hits in the track no. 1 present?
  3. and possibly any other criterion where the generator would be failing.
+### Variational Autoencoders
+Autoencoders do not by default produce nice almost everywhere differentiable distribution in latent space, therefore Variational autoencoders are commonly used. See [Resources](#resources) section.
 ## Fitting
  * Trying to give hint to [TKEvent](https://github.com/TomasKrizak/TKEvent), where it should search for solution (angle - 5 segments, position on foil - 10 segments)
- * Mixed results: For one track we have approximately 70% accuracy (see "Results" section). Then it falls for events with more tracks.
+ * Mixed results: For one track we have approximately 70% accuracy (see [Results](#results) section). Then it falls for events with more tracks.
 # Help needed from collaboration
  * Information about kinks.
 # Software
@@ -82,7 +88,7 @@ If you start job from bash instance with some packages, modules or virtual envir
 1. source `root` (and `python`) - **currently use `module add Analysis/root/6.22.06-fix01`**
 2. create python virtual environment (if not done yet) 
 3. install [packages](#required-software) (if not done yet)
-4. load python virtual environment
+4. load python virtual environment (or add `#! <path-to-your-python-bin-in-envorinment>` to first line of your script)
 ## Working with real data (temporary solution)
 We test models on real data and compared them with [TKEvent](https://github.com/TomasKrizak/TKEvent). Unfortunately, it is not possible to open `root` files produced by [TKEvent](https://github.com/TomasKrizak/TKEvent) library since this library might be built with different version of python and libstdc++. Fortunately, workaround exists. We need to download and build two versions of [TKEvent](https://github.com/TomasKrizak/TKEvent). First version will be built in the manner described in [TKEvent](https://github.com/TomasKrizak/TKEvent) README.md. The second library shoudl be build (we ignore the `red_to_tk` target) with following steps:
 
@@ -92,6 +98,20 @@ We test models on real data and compared them with [TKEvent](https://github.com/
 Now, we can use `red_to_tk` from the first library to obtain root file with `TKEvent` objects and open this root file with the second version of `TKEvent` library.
 ## Working with real data (future-proof)
 If the collaboration will want to use keras models inside software, the best way is probably to use [cppflow](https://github.com/serizba/cppflow) . It is single header c++ library for acessing TensoFlow C api. This means that we will not have to build TensorFlow from source and we should not be restricted by root/python/gcc/libstdc++ version nor calling conventions. 
+## Local modules
+Not to be restricted by the organization structure of our folders, we use this script to load, register and return local modules.
+```
+def import_arbitrary_module(module_name,path):
+    import importlib.util
+    import sys
+
+    spec = importlib.util.spec_from_file_location(module_name,path)
+    imported_module = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = imported_module
+    spec.loader.exec_module(imported_module)
+
+    return imported_module
+```
 ## Issues
  1. `sbatch` and `tensorflow` sometimes fail to initialize libraries (mainly to source python from virtual environment or root) - start the script again ideally from new bash instance without any modules nor virtual environment loaded.
  2. `tensorflow` sometimes runs out of memory - Don't use checkpoints for `tensorboard`. Another cause of this problem might be training more models in one process, we can solve this by `keras.backend.clear_session()`. If this error occurs after several hours of program execution, check out function `tf.config.experimental.set_memory_growth`. 
@@ -118,7 +138,7 @@ If the collaboration will want to use keras models inside software, the best way
  * `side_associated_calorimeter.py`
  * `generator.py` - Generator used in GAN architecture
  * `discriminator.py` - Discriminator used in GAN architecture
- * `matteo_with_skip_connections.py` - Autoencoder for clustering proposed and tested by Matteo (don't know exactly what the results are and if it was working at all). In fact, it is modified SegNET (see "Resources" section).
+ * `matteo_with_skip_connections.py` - Autoencoder for clustering proposed and tested by Matteo (don't know exactly what the results are and if it was working at all). In fact, it is modified SegNET (see [Resources](#resources) section).
   * `matteo_without_skip_connections.py` - The same as above but the skip connections are removed. This should not work for clustering, but it will work as autoencoder.
 
 ## `Generator`
@@ -157,7 +177,7 @@ First attempts to use ML to help [TKEvent](https://github.com/TomasKrizak/TKEven
  * [Confusion matrix for front model (my_generator)](./ImagesAndDocuments/front_model_my_generator_confusion_matrix.pdf)
  * [Confusion matrix for combined model (my_generator)](./ImagesAndDocuments/combined_model_my_generator_confusion_matrix.pdf)
  * [Confusion matrix for prediction of angle from top view (my_generator)](./ImagesAndDocuments/angle_1_confusion.pdf)
- * [Autoencoders result]()
+ * [Comparison of accuracy for associated calorimeter (classical sigmoid approach and softmax approach proposed by meta)]() - please not that multi-label classification is complex task, so these results **require further analysis**! 
 ## Real data
  * [Prediction of number of tracks on real data](./ImagesAndDocuments/top_model_classification)
    * only top view
@@ -170,6 +190,15 @@ First attempts to use ML to help [TKEvent](https://github.com/TomasKrizak/TKEven
  * [Deep Convolutional Generative Adversarial Network](https://www.tensorflow.org/tutorials/generative/dcgan)
  * [Building a simple Generative Adversarial Network (GAN) using TensorFlow](https://blog.paperspace.com/implementing-gans-in-tensorflow/)
  * [NIPS 2016 Tutorial: Generative Adversarial Networks](https://arxiv.org/pdf/1701.00160.pdf)
+ * Variational autoencoders [Auto-Encoding Variational Bayes](https://arxiv.org/abs/1312.6114)
+    * anbles nicer distribution in latent space, which then can be reused for other ML algorithms or used as generator
+ * [Adversarial autoencoders](https://arxiv.org/pdf/1511.05644.pdf)
+    * connect distriminator to latent space and force encoder to produce latent space mimicking the prefered distribution
+    * next diccusses semi-superwised learning and unsuperwised clustering (clustering of images, not image segmentation what we want to achieve)
+  * [Autoencoding beyond pixels using a learned similarity metric](https://arxiv.org/pdf/1512.09300.pdf)
+    * Summarizes AE, VAE, VAE/GAN approach (my approach for clustering tracker hits)
+
+  
 ## Image Segmentation (clustering tracker hits)
  * [Image Segmentation Using Deep Learning: A Survey](https://arxiv.org/pdf/2001.05566.pdf)
  * [SegNET](https://arxiv.org/pdf/1511.00561.pdf)
