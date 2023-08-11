@@ -167,9 +167,9 @@ Trained models in TensorFlow format.
  * `combined_my_generator ` - Top, side and front view combined usign transfer learning (`my_generator`)
 ## `enhanced_fitting`
 First attempts to use ML to help [TKEvent](https://github.com/TomasKrizak/TKEvent).
- * 'TKEvent' - slightly modified [TKEvent](https://github.com/TomasKrizak/TKEvent) library.
- * 'fit_one_iteratively.py' - uses ml to predict number of tracks and fits one track, removes associated tracker hits from event and repeats until the predicted tracks are fitted
- * 'special_events.py' - can modify events and inspect differences between number of predicted tracks before modificatio and after
+ * `TKEvent` - slightly modified [TKEvent](https://github.com/TomasKrizak/TKEvent) library.
+ * `fit_one_iteratively.py` - uses ml to predict number of tracks and fits one track, removes associated tracker hits from event and repeats until the predicted tracks are fitted
+ * `special_events.py` - can modify events and inspect differences between number of predicted tracks before modificatio and after
 ## `VAE` 
 Helper files for Variational Autoencoder.
  * `decoders.py` - decoders for VAEs
