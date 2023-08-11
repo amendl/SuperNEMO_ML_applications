@@ -177,7 +177,7 @@ First attempts to use ML to help [TKEvent](https://github.com/TomasKrizak/TKEven
  * [Confusion matrix for front model (my_generator)](./ImagesAndDocuments/front_model_my_generator_confusion_matrix.pdf)
  * [Confusion matrix for combined model (my_generator)](./ImagesAndDocuments/combined_model_my_generator_confusion_matrix.pdf)
  * [Confusion matrix for prediction of angle from top view (my_generator)](./ImagesAndDocuments/angle_1_confusion.pdf)
- * [Comparison of accuracy for associated calorimeter (classical sigmoid approach and softmax approach proposed by meta)]() - please not that multi-label classification is complex task, so these results **require further analysis**! 
+ * [Comparison of accuracy for associated calorimeter (classical sigmoid approach and softmax approach proposed by Meta Research for multi-label classification tasks)](./ImagesAndDocuments/multilabel.pdf) - please not that multi-label classification is complex task, so these results **require further analysis**! 
 ## Real data
  * [Prediction of number of tracks on real data](./ImagesAndDocuments/top_model_classification)
    * only top view
