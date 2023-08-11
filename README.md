@@ -120,6 +120,7 @@ def import_arbitrary_module(module_name,path):
  * `lib.py` -  small library with some functions that are reused across this project 
  * `number_of_tracks_classification.py`
  * `combined.py` - Script for constructing and training model consisting from `top`, `side` and `front` models.
+ * `vae.py` - Trains VAE models
  * `number_of_tracks_classification3D.py` - TODO: Classification using Conv3D
  * `plot_confusion.py` - Script helping analyze badly classified events
  * `clustering_one.py`- example of custom trainig loop for GAN autoencoders used for clustering
@@ -169,6 +170,12 @@ First attempts to use ML to help [TKEvent](https://github.com/TomasKrizak/TKEven
  * 'TKEvent' - slightly modified [TKEvent](https://github.com/TomasKrizak/TKEvent) library.
  * 'fit_one_iteratively.py' - uses ml to predict number of tracks and fits one track, removes associated tracker hits from event and repeats until the predicted tracks are fitted
  * 'special_events.py' - can modify events and inspect differences between number of predicted tracks before modificatio and after
+## `VAE` 
+Helper files for Variational Autoencoder.
+ * `decoders.py` - decoders for VAEs
+ * `encoders.py` - encoders for VAEs
+ * `lib.py` - VAE architecture and layer for Reparametrization trick
+ * `my_dataset_with_hint.py` - implementation of tf.datasets workflow for VAE and my_generator
 # Results 
 ## SN-IEGenerator, my_generator
  * [Confusion matrix for combined model (SN-IEGenerator)](./ImagesAndDocuments/combined.pdf)
