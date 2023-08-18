@@ -117,6 +117,15 @@ def import_arbitrary_module(module_name,path):
  2. `tensorflow` sometimes runs out of memory - Don't use checkpoints for `tensorboard`. Another cause of this problem might be training more models in one process, we can solve this by `keras.backend.clear_session()`. If this error occurs after several hours of program execution, check out function `tf.config.experimental.set_memory_growth`. 
  3. TensorFlow 2.13 distributed training fail - https://github.com/tensorflow/tensorflow/issues/61314
  4. Sometimes, there are strange errors regarding ranks of tensors while using custom training loop in `gan.py` - looks like really old still unresolved bug inside core tensorflow library. However, the workaround is to pass only one channel into CNN architecture and concat them with `tf.keras.layers.Concatenate`
+ 5. `numpy` ocasionally stops working, failing to import (`numpy.core._multiarray_umath` or other parts of `numpy` library). Is is accompanied by message:
+ ```
+IMPORTANT: PLEASE READ THIS FOR ADVICE ON HOW TO SOLVE THIS ISSUE!
+
+Importing the numpy C-extensions failed. This error can happen for
+many reasons, often due to issues with your setup or how NumPy was
+installed.
+ ``` 
+ Simplest solution is to create new environment and install all libraries inside that.
 # Description of files
  * `lib.py` -  small library with some functions that are reused across this project 
  * `number_of_tracks_classification.py`
