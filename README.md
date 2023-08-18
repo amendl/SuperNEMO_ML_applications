@@ -116,6 +116,7 @@ def import_arbitrary_module(module_name,path):
  1. `sbatch` and `tensorflow` sometimes fail to initialize libraries (mainly to source python from virtual environment or root) - start the script again ideally from new bash instance without any modules nor virtual environment loaded.
  2. `tensorflow` sometimes runs out of memory - Don't use checkpoints for `tensorboard`. Another cause of this problem might be training more models in one process, we can solve this by `keras.backend.clear_session()`. If this error occurs after several hours of program execution, check out function `tf.config.experimental.set_memory_growth`. 
  3. TensorFlow 2.13 distributed training fail - https://github.com/tensorflow/tensorflow/issues/61314
+ 4. Sometimes, there are strange errors regarding ranks of tensors while using custom training loop in `gan.py` - looks like really old still unresolved bug inside core tensorflow library. However, the workaround is to pass only one channel into CNN architecture and concat them with `tf.keras.layers.Concatenate`
 # Description of files
  * `lib.py` -  small library with some functions that are reused across this project 
  * `number_of_tracks_classification.py`
@@ -125,6 +126,8 @@ def import_arbitrary_module(module_name,path):
  * `plot_confusion.py` - Script helping analyze badly classified events
  * `clustering_one.py`- example of custom trainig loop for GAN autoencoders used for clustering
  * `multilabel_analysis.py` - script for analysing various aspect of multilabel classifier used for associated calorimeter hit detection
+ * `gan.py` - 
+ * `testing_clustering.py` - code for testing tracker hit clustering algorithms
 ## `capsule`
  * `routing_by_agreement.py` - `tensorflow.while_loop` implementation of routing algorithm
  * `capsule_lib.py` - basic parts of CapsNET architecture
