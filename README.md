@@ -129,8 +129,11 @@ def import_arbitrary_module(module_name,path):
  * `gan.py` - 
  * `testing_clustering.py` - code for testing tracker hit clustering algorithms
 ## `capsule`
- * `routing_by_agreement.py` - `tensorflow.while_loop` implementation of routing algorithm
  * `capsule_lib.py` - basic parts of CapsNET architecture
+   * For more information about CapsNET and capsules, see [Resources](#resources)
+   * `class RoutingByAgreement` implements routing by agreement procedure proposed by Hinton using `tf.while_loop`
+   * `class PrimaryCapsule` - implements the first capsule layer in CapsNET architecture
+   * `class SecondaryCapsule` implements the second capsule layer in CapsNET architecture
 ## `architectures`
  * `top.py`
  * `top_big.py`
