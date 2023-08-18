@@ -184,8 +184,36 @@ def train_step(dataset_batch,generator_network,discriminator_network,accuracy_re
         )
     )
 
+def analyze_goodness_of_track(event,ground_truth,generated,number_of_classes,confusion):
+    '''
+    
+    '''
+    
+    @tf.function
+    def hit(x): return 1.
+    @tf.function
+    def no_hit(x): return 0.
+
+    generated_10 = tf.cond(generated > 0.5,hit,no_hit)
+
+    length_of_left_tracks_truth = tf.math.reduce_sum(tf.math.reduce_sum(ground_truth,axis=2),axis=1)
+    length_of_removed_tracks_truth =  tf.math.reduce_sum(tf.math.reduce_sum(event,axis=2),axis=1) - length_of_left_tracks_truth
+
+    length_of_removed_tracks = tf.math.reduce_sum(tf.math.reduce_sum(tf.cond(generated < 0.5 and  event > 0.5 and ground_truth < 0.5,),axis=2),axis=1)
+    length_of_not_removed_tracks = tf.math.reduce_sum(tf.math.reduce_sum(tf.cond(generated > 0.5 and event > 0.5 and ground_truth > 0.5),axis=2),axis=1)
+
+    fraction_removed = tf.math.divide(length_of_removed_tracks,length_of_left_tracks_truth)
+    fraction_left = tf.math.divide(length_of_not_removed_tracks,length_of_removed_tracks_truth)
+
+
+    for removed, left in zip(fraction_removed,fraction_left):
+        confusion[min(int(removed*float(number_of_classes)),number_of_classes-1),min(int(left*float(number_of_classes)),number_of_classes-1)]+=1
+    
+    return confusion
 
 def run_test(test_dataset,generator_network,discriminator_network,means,accuracy_real,accuracy_fake):
+    NUMBER_OF_CLASSES = 2
+    confusion = np.zeros((NUMBER_OF_CLASSES,NUMBER_OF_CLASSES))
 
     map(lambda x: x.reset_state(),means)
     accuracy_real.reset_state()
@@ -196,14 +224,17 @@ def run_test(test_dataset,generator_network,discriminator_network,means,accuracy
         (dic, (generated, _, _ )) = train_step(test_dataset_batch,generator_network,discriminator_network,accuracy_real,accuracy_fake)
         for mean_holder, mean_value in zip(means,dic.values()):
             mean_holder.update_state(mean_value)
-        # TODO add analysis of usefullness of clustering
-    
+        analyze_goodness_of_track(test_dataset[0],test_dataset[1],generated,NUMBER_OF_CLASSES,confusion)
+
     # print results
     for name,mean_holder in zip(["discriminator full","discriminator real","discriminator fake","generator loss"],means):
         print(name,str(mean_holder.result().numpy()).ljust(10),sep=" : ",end="; ")
 
+    return confusion
+
 
 def print_discriminator_accuracies(real_accuracy_metric,fake_accuracy_metric,sep="; ",end=""):
+
     print(f"discriminator_real_accuracy : {real_accuracy_metric.result().numpy() if real_accuracy_metric is tf.keras.metrics.BinaryAccuracy else real_accuracy_metric}",f"discriminator_fake_accuracy : {fake_accuracy_metric.result().numpy() if fake_accuracy_metric is tf.keras.metrics.BinaryAccuracy else fake_accuracy_metric}",sep=sep,end=end)
 
 
