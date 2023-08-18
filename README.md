@@ -128,12 +128,11 @@ def import_arbitrary_module(module_name,path):
  * `multilabel_analysis.py` - script for analysing various aspect of multilabel classifier used for associated calorimeter hit detection
  * `gan.py` - 
  * `testing_clustering.py` - code for testing tracker hit clustering algorithms
-## `capsule`
  * `capsule_lib.py` - basic parts of CapsNET architecture
    * For more information about CapsNET and capsules, see [Resources](#resources)
    * `class RoutingByAgreement` implements routing by agreement procedure proposed by Hinton using `tf.while_loop`
    * `class PrimaryCapsule` - implements the first capsule layer in CapsNET architecture
-   * `class SecondaryCapsule` implements the second capsule layer in CapsNET architecture
+   * `class SecondaryCapsule` implements the second capsule layer in CapsNET architecture 
 ## `architectures`
  * `top.py`
  * `top_big.py`
@@ -219,8 +218,6 @@ Aproach to clustering done by Matteo. Sometimes works really well, sometimes rea
     * next diccusses semi-superwised learning and unsuperwised clustering (clustering of images, not image segmentation what we want to achieve)
   * [Autoencoding beyond pixels using a learned similarity metric](https://arxiv.org/pdf/1512.09300.pdf)
     * Summarizes AE, VAE, VAE/GAN approach (my approach for clustering tracker hits)
-
-  
 ## Image Segmentation (clustering tracker hits)
  * [Image Segmentation Using Deep Learning: A Survey](https://arxiv.org/pdf/2001.05566.pdf)
  * [SegNET](https://arxiv.org/pdf/1511.00561.pdf)
@@ -229,7 +226,7 @@ Aproach to clustering done by Matteo. Sometimes works really well, sometimes rea
  * [Preprint on routing algorithm (Capsule architecture)](https://arxiv.org/abs/1710.09829)
  * [Tensorflow implementation 1](https://www.kaggle.com/code/giovanimachado/capsnet-tensorflow-implementation)
  * [Tensorflow implementation 2](https://towardsdatascience.com/implementing-capsule-network-in-tensorflow-11e4cca5ecae)
- * [MATRIX CAPSULES WITH EM ROUTING](https://openreview.net/pdf?id=HJWLfGWRb)
+ * [Matrix Capsules with EM routing](https://openreview.net/pdf?id=HJWLfGWRb)
 ## Tensorflow
  * [Dense layer in keras (how to build custom keras model)](https://github.com/keras-team/keras/blob/v2.12.0/keras/layers/core/dense.py)
  * [Tricks for custom layers](https://oliver-k-ernst.medium.com/a-cheat-sheet-for-custom-tensorflow-layers-and-models-aa465df2bc8b)
