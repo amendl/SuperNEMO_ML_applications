@@ -63,7 +63,7 @@ Almost everything runs ot top of `python3`. On CCLyon use `python` sourced with 
 This software should be installed in python or Anaconda environment (python environment is prefered since it can access  both sourced root package and all gpu related software directly, however it is still possible to make it work with Anaconda)
  * `root` - Root is not needed to be explicitly installed in python or Anaconda environment, any sourced Root on CCLyon should work - minimum tested verion 6.22.06 (since July 12 2023 6.22.06-fix01 on CCLyon). **PyROOT is required.**
  * `cudatoolkit`, `cudnn` - Should be already installed on CCLyon 
- * `tensorflow`
+ * `tensorflow` - (ideally 2.13, older version produce some random bug)
  * `keras` - Should be part of `tensorflow`
  * `keras-tuner` - hyperparameter tuning
  * `numpy`
@@ -198,7 +198,6 @@ Aproach to clustering done by Matteo. Sometimes works really well, sometimes rea
  * [Comparison of accuracy for associated calorimeter (classical sigmoid approach and softmax approach proposed by Meta Research for multi-label classification tasks)](./ImagesAndDocuments/multilabel.pdf) - please not that multi-label classification is complex task, so these results **require further analysis**! 
  * [Clustering approach by Matteo - learned on my_generator with events with 2 tracks to remove left track - sometimes works, sometimes doesnt](./ImagesAndDocuments/matteo_testing)
    * To see this well cat this file into terminal.
-
 ## Real data
  * [Prediction of number of tracks on real data](./ImagesAndDocuments/top_model_classification)
    * only top view
