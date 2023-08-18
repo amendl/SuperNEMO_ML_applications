@@ -168,6 +168,10 @@ Trained models in TensorFlow format.
  * `side_my_generator ` - Number of tracks classifier viewing detector from side (`my_generator`)
  * `front_my_generator ` - Number of tracks classifier viewing detector from front (`my_generator`)
  * `combined_my_generator ` - Top, side and front view combined usign transfer learning (`my_generator`)
+ * `matteo_with_skip` - Autoencoder based on Matteos architecture (`my_generator`)
+ * `matteo_without_skip` - Autoencoder based on Matteos architecture (`my_generator`)
+ * `clustering_matteo_with_skip_connections` - Learned to remove track on left from events with two tracks (`my_generator`)
+ * `clustering_matteo_without_skip_connections` - Learned to remove track on left from events with two tracks (`my_generator`)
 ## `enhanced_fitting`
 First attempts to use ML to help [TKEvent](https://github.com/TomasKrizak/TKEvent).
  * `TKEvent` - slightly modified [TKEvent](https://github.com/TomasKrizak/TKEvent) library.
