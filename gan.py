@@ -46,7 +46,7 @@ class GAN_History:
     '''
     
     '''
-    def __init__(self,x,loss_discriminator_true,loss_discriminator_fake,loss_generator,epoch_boundaries,eval_loss_discriminator_true,eval_loss_discriminator_fake,eval_loss_generator):
+    def __init__(self,x,loss_discriminator_true,loss_discriminator_fake,loss_generator,epoch_boundaries,eval_loss_discriminator_true,eval_loss_discriminator_fake,eval_loss_generator,real_training_accuracy,fake_training_accuracy,real_val_accuracy,fake_val_accuracy):
         self.x                              = x
         self.loss_discriminator_true        = loss_discriminator_true
         self.loss_discriminaotr_fake        = loss_discriminator_fake
@@ -56,6 +56,12 @@ class GAN_History:
         self.eval_loss_discriminator_true   = eval_loss_discriminator_true
         self.eval_loss_discriminaotr_fake   = eval_loss_discriminator_fake
         self.eval_loss_generator            = eval_loss_generator
+
+        self.real_training_accuracy         = real_training_accuracy
+        self.fake_training_accuracy         = fake_training_accuracy
+
+        self.real_val_accuracy              = real_val_accuracy
+        self.fake_val_accuracy              = fake_val_accuracy
     
     def __getstate__(self):
         return self.__dict__
@@ -63,8 +69,8 @@ class GAN_History:
     def __setstate__(self, d):
         self.__dict__ = d
 
-    def plot(self):
-        pass
+    def plot(self,plot_losses = True, plor_accuracies = True):
+        raise NotImplementedError()
 
 
 
@@ -126,7 +132,7 @@ def process_batch(batch,training,generator_network,discriminator_network) -> tup
     return generated, discriminator_network((tf.cast(batch[0],dtype=tf.float64),tf.cast(batch[1],dtype=tf.float64)),training = training), discriminator_network((tf.cast(batch[0],dtype=tf.float64),tf.cast(generated,dtype=tf.float64)),training = training)
 
 @tf.function
-def train_step(dataset_batch,generator_network,discriminator_network,generator_optimizer = None,discriminator_optimizer = None,training = False):
+def train_step(dataset_batch,generator_network,discriminator_network,accuracy_real,accuracy_fake,generator_optimizer = None,discriminator_optimizer = None,training = False) -> tuple:
     '''
     
     '''
@@ -146,8 +152,15 @@ def train_step(dataset_batch,generator_network,discriminator_network,generator_o
     finally:
         if gen_tape._recording:
             gen_tape.__exit__(None,None,None)
+        elif training:
+            raise RuntimeError("Fatal Error: Tape 'gen_tape' should be in recording state, but it is not! Training step failed!")
         if dis_tape._recording:
             dis_tape.__exit__(None,None,None)
+        elif training:
+            raise RuntimeError("Fatal Error: Tape 'dis_tape' should be in recording state, but it is not! Training step failed!")
+
+    # add to accuracy
+    accuracy_real.update_state()
 
 
     if training and generator_optimizer is not None and discriminator_optimizer is not None:
@@ -172,30 +185,71 @@ def train_step(dataset_batch,generator_network,discriminator_network,generator_o
     )
 
 
-def run_test(test_dataset,generator_network,discriminator_network,means):
+def run_test(test_dataset,generator_network,discriminator_network,means,accuracy_real,accuracy_fake):
+
     map(lambda x: x.reset_state(),means)
+    accuracy_real.reset_state()
+    accuracy_fake.reset_state()
         
     # run evaluation
     for test_dataset_batch in test_dataset:
-        (dic, (generated, _, _ )) = train_step(test_dataset_batch,generator_network,discriminator_network)
+        (dic, (generated, _, _ )) = train_step(test_dataset_batch,generator_network,discriminator_network,accuracy_real,accuracy_fake)
         for mean_holder, mean_value in zip(means,dic.values()):
             mean_holder.update_state(mean_value)
-        # TODO add analysis of goodness of tracks
+        # TODO add analysis of usefullness of clustering
     
     # print results
     for name,mean_holder in zip(["discriminator full","discriminator real","discriminator fake","generator loss"],means):
         print(name,str(mean_holder.result().numpy()).ljust(10),sep=" : ",end="; ")
-    print()
-    sys.stdout.flush()
+
+
+def print_discriminator_accuracies(real_accuracy_metric,fake_accuracy_metric,sep="; ",end=""):
+    print(f"discriminator_real_accuracy : {real_accuracy_metric.result().numpy() if real_accuracy_metric is tf.keras.metrics.BinaryAccuracy else real_accuracy_metric}",f"discriminator_fake_accuracy : {fake_accuracy_metric.result().numpy() if fake_accuracy_metric is tf.keras.metrics.BinaryAccuracy else fake_accuracy_metric}",sep=sep,end=end)
+
+
+
 
 def train(epochs,dataset,val_dataset,generator_optimizer,discriminator_optimizer,generator_network,discriminator_network,plot_every = None):
     '''
     
     '''
-    x = []
-    epoch_boundaries = []
-    arrays = [[]for _ in range(4)]
-    means = [tf.keras.metrics.Mean() for _ in range(4)]
+    if epochs is not int:
+        raise TypeError("Argument 'epochs' should be integer")
+    if epochs < 1:
+        raise ValueError("Argument 'epochs' should be positive integer")
+    if not issubclass(type(generator_optimizer),tf.optimizers.Optimizer):
+        raise TypeError("Argument 'generator_optimizer' should be subclass of 'tf.optimizers.Optimizer'")
+    if not issubclass(type(discriminator_optimizer),tf.optimizers.Optimizer):
+        raise TypeError("Argument 'discriminator_optimizer' should be subclass of 'tf.optimizers.Optimizer'")
+    if (plot_every is not None) or (plot_every is not int):
+        raise TypeError("Argument 'plot_every' should be integer or None")
+    if plot_every is int and plot_every < 1:
+        raise ValueError("Argument 'plot_every' should be positive integer.")
+    
+    # TODO checking instances of datasets is probably too complicated    
+    
+
+    x                            = []
+    epoch_boundaries             = []
+    arrays                       = [[]for _ in range(4)]
+    means                        = [tf.keras.metrics.Mean() for _ in range(4)]
+
+    accuracy_real_training       = tf.keras.metrics.BinaryAccuracy()
+    accuracy_fake_training       = tf.keras.metrics.BinaryAccuracy()
+
+    accuracy_fake_val            = tf.keras.metrics.BinaryAccuracy()
+    accuracy_real_val            = tf.keras.metrics.BinaryAccuracy()
+
+    eval_loss_discriminator_true = []
+    eval_loss_discriminator_fake = []
+    eval_loss_generator          = []
+
+    real_training_accuracy       = []
+    fake_training_accuracy       = []
+
+    real_val_accuracy            = []
+    fake_val_accuracy            = []
+
     steps = None
     for epoch_index in range(1,epochs+1):
         print(f'\n[train function]: Epoch #{epoch_index} started:')
@@ -206,12 +260,18 @@ def train(epochs,dataset,val_dataset,generator_optimizer,discriminator_optimizer
         i = 1
         for dataset_batch in dataset:
             print(f"[{str(i).rjust(7)} from {'Unknown' if steps == None else str(steps).rjust(7)}",end="]: ")
-            for j,(metric_key,metric_value) in enumerate(train_step(dataset_batch,generator_network,discriminator_network,generator_optimizer,discriminator_optimizer,True)[0].items()):
+            # reset states of discriminator accuracies
+            accuracy_real_training.reset_state()
+            accuracy_fake_training.reset_state()
+            # run testing step print metrics and add data to training history
+            for j,(metric_key,metric_value) in enumerate(train_step(dataset_batch,generator_network,discriminator_network,accuracy_real_training,accuracy_fake_training,generator_optimizer,discriminator_optimizer,True)[0].items()):
                 print(metric_key,str(metric_value.numpy()).ljust(10),sep=" : ",end="; ")
                 if plot_every is not None and i%plot_every == 0:
                     x.append(i+(steps if steps is not None else 0)*(epoch_index-1))
                     arrays[j].append(metric_value.numpy())
-
+            print_discriminator_accuracies(accuracy_real_training,accuracy_fake_training)
+            real_training_accuracy.append(accuracy_real_training.result().numpy)
+            fake_training_accuracy.append(accuracy_fake_training.result().numpy)
 
             i+=1
             print()
@@ -221,7 +281,18 @@ def train(epochs,dataset,val_dataset,generator_optimizer,discriminator_optimizer
         epoch_boundaries.append((epoch_index-1)*steps)
 
         print("\nValidation results: ",end="")
-        run_test(val_dataset,generator_network,discriminator_network,means)
+        
+        # run validation
+
+        run_test(val_dataset,generator_network,discriminator_network,means,accuracy_real_val,accuracy_fake_val)
+        eval_loss_discriminator_true.append(means[1].result().numpy())
+        eval_loss_discriminator_fake.append(means[2].result().numpy())
+        eval_loss_generator         .append(means[3].result().numpy())
+        print_discriminator_accuracies(accuracy_real_val,accuracy_fake_val)
+        real_val_accuracy.append(accuracy_real_val.result().numpy)
+        fake_val_accuracy.append(accuracy_fake_val.result().numpy)
+
+        print()
 
         print(f'[train function]: Epoch #{epoch_index} took {int(time.time() - start)} s')
         sys.stdout.flush()
@@ -232,9 +303,13 @@ def train(epochs,dataset,val_dataset,generator_optimizer,discriminator_optimizer
         loss_discriminator_fake      = arrays[2],
         loss_generator               = arrays[3],
         epoch_boundaries             = epoch_boundaries,
-        eval_loss_discriminator_true = means[1].result().numpy(),
-        eval_loss_discriminator_fake = means[2].result().numpy(),
-        eval_loss_generator          = means[3].result().numpy()
+        eval_loss_discriminator_true = eval_loss_discriminator_true,
+        eval_loss_discriminator_fake = eval_loss_discriminator_fake,
+        eval_loss_generator          = eval_loss_generator,
+        real_training_accuracy       = real_training_accuracy,
+        fake_training_accuracy       = fake_training_accuracy,
+        real_val_accuracy            = real_val_accuracy,
+        fake_val_accuracy            = fake_val_accuracy   
     )
 
 if __name__=="__main__":
@@ -299,11 +374,12 @@ if __name__=="__main__":
         generator_network           = generator,
         discriminator_network       = discriminator,
         plot_every                  = 20
-
     )
 
-    with open('history','wb') as f:
+    with open('history.pickle','wb') as f:
         pickle.dump(history,f)
+    with open('options.pickle','wb') as f:
+        pickle.dump(options,f)
 
 
     generator           .save("generator")
