@@ -20,8 +20,11 @@ my_ml_lib       = import_arbitrary_module("my_ml_lib",      "/sps/nemo/scratch/a
 
 
 def architecture1(latent_dim):
+    '''
+        architecture based on encoders used by me for number of tracks classification problem and decoder taken from matteos autoencoder
+    '''
     i = keras.Input(shape=(latent_dim,))
-    x = layers.Dense(64)(i)
+    x = layers.Dense(256)(i)
     x = layers.Dense(29*3*64,activation="relu")(x)
     x = layers.Reshape((29,3,64))(x)
     conv3 = keras.layers.Conv2D(64, (3, 3), activation='relu', padding='same')(x)
@@ -44,3 +47,33 @@ def architecture1(latent_dim):
     my_ml_lib.count_and_print_weights(model)
 
     return model
+
+
+def architecture2(latent_dim):
+    '''
+
+    '''
+    i = keras.Input(shape=(latent_dim,))
+
+    x = layers.Dense(latent_dim)(i)
+    x = layers.Dense(29*3*64,activation="relu")(x)
+    x = layers.Reshape((29,3,64))(x)
+    up1 = keras.layers.UpSampling2D((2, 2))(x)
+    conv4 = keras.layers.Conv2D(64, (3, 3), activation='relu', padding='same')(up1)
+    conv4 = keras.layers.Dropout(0.2)(conv4)
+    conv4 = keras.layers.Conv2D(64, (3, 3), activation='relu', padding='same')(conv4)
+
+    up2 = keras.layers.UpSampling2D((2, 2))(conv4)
+    conv5 = keras.layers.Conv2D(32, (3, 3), activation='relu', padding='same')(up2)
+    conv5 = keras.layers.Dropout(0.2)(conv5)
+    conv5 = keras.layers.Conv2D(32, (3, 3), activation='relu', padding='same')(conv5)
+
+    out = keras.layers.Conv2D(1, 3, padding='same')(keras.layers.UpSampling2D(1)(conv5)) # (2,3)
+    model = keras.models.Model(i, out, name="decoder")
+
+    my_ml_lib.count_and_print_weights(model)
+
+    return model
+
+
+

@@ -11,10 +11,10 @@ If you have any questions feel free to contact me at [adam.mendl@cvut.cz](mailto
  * Use generative adversarial networks with convolutional autoencoders for track clustering.
  * Predict associated calorimeter hit(s) using single-label classification on clustered events or multi-label classification on not clustered events.
 # Progress
- * Currently discussing with Tomas how to incorporate ML into his fitting algorithm.
+ * Discussing with Tomas how to incorporate ML into his fitting algorithm.
  * Tested track counting model on real data. Summary of all efforts is that the model adapts **pretty well** on measured data. 
  * First parts of CapsNET layer, hoping to finish this soon.
- * **Currently working on autoencoders**
+ * **Currently working on autoencoders** - I have done some simple tests with Matteos architecture. Now trying to use variational autoencoders.
 ## Calculating number of tracks
  * Counting tracks done on my_generator (works really well). It removes the problem that [SN-IEGenerator](https://github.com/SuperNEMO-DBD/SN-IEgenerator) sometimes generates event with less tracks.
  * Tested on real data, two main problems:
@@ -176,6 +176,8 @@ Helper files for Variational Autoencoder.
  * `encoders.py` - encoders for VAEs
  * `lib.py` - VAE architecture and layer for Reparametrization trick
  * `my_dataset_with_hint.py` - implementation of tf.datasets workflow for VAE and my_generator
+## `Matteo`
+Aproach to clustering done by Matteo. Sometimes works really well, sometimes really badly.
 # Results 
 ## SN-IEGenerator, my_generator
  * [Confusion matrix for combined model (SN-IEGenerator)](./ImagesAndDocuments/combined.pdf)
@@ -185,6 +187,9 @@ Helper files for Variational Autoencoder.
  * [Confusion matrix for combined model (my_generator)](./ImagesAndDocuments/combined_model_my_generator_confusion_matrix.pdf)
  * [Confusion matrix for prediction of angle from top view (my_generator)](./ImagesAndDocuments/angle_1_confusion.pdf)
  * [Comparison of accuracy for associated calorimeter (classical sigmoid approach and softmax approach proposed by Meta Research for multi-label classification tasks)](./ImagesAndDocuments/multilabel.pdf) - please not that multi-label classification is complex task, so these results **require further analysis**! 
+ * [Clustering approach by Matteo - learned on my_generator with events with 2 tracks to remove left track - sometimes works, sometimes doesnt](./ImagesAndDocuments/matteo_testing)
+   * To see this well cat this file into terminal.
+
 ## Real data
  * [Prediction of number of tracks on real data](./ImagesAndDocuments/top_model_classification)
    * only top view

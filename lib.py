@@ -185,9 +185,9 @@ def multilabel_confusion(model,test_dataset,i,generatePdf=False):
 
 class RandomCell:
     '''
-
+        
     '''
-    def __init__(self,side,row,layer,rate,fire,distribution_):
+    def __init__(self,side,row,layer,rate,fire,distribution_,layer_function = None,row_function = None):
         '''
             Generates noise for specific cell
         '''
@@ -201,18 +201,22 @@ class RandomCell:
         self.dist   = distribution_
         self.rate   = rate
 
+        self.layer_function = lambda x: x if layer_function == None else layer_function
+        self.row_function   = lambda x: x if row_function == None else row_function
+
     def __call__(self,top_projection,side_projection,front_projection,side):
         '''
         
         '''
-        if side==2 and side==self.side:
+        if (side==2 or side==self.side) and tf.random.uniform((1))[0] < self.rate:
             fill = 0. if self.fire == False else 1. 
             z = int((max(min(self.dist(),1490.),-1500.)+1500.)/100.)
-            top_projection[self.layer,self.row]         = fill
-            side_projection[z,self.row]                 = fill
-            front_projection[z,self.layer]              = fill
-
-
+            if top_projection!=None:
+                top_projection[self.layer_function(self.layer),self.row_function(self.row)]         = fill
+            if side_projection!=None:
+                side_projection[z,self.row_function(self.row)]                                      = fill
+            if front_projection!=None:
+                front_projection[z,self.layer_function(self.layer)]                                 = fill
 
 class RandomFullDetector():
     '''
@@ -239,7 +243,6 @@ class RandomFullDetector():
             front_projection[z,layer]           = fill
             self(top_projection,side_projection,front_projection,side)
 
-
 class ThresholdFinder:
     '''
         TODO general size of histogram
@@ -264,5 +267,44 @@ class ThresholdFinder:
         plt.savefig(params)
 
 
+class ParametersIterator:
+    def __init__(self):
+        pass
+
+    def print_parameters(self):
+        print(vars(self))
+
+class AutoencoderOptions(ParametersIterator):
+    '''
+    
+    '''
+
+    def __init__(self):
+        ParametersIterator.__init__(self)
+
+
+
+class TrainingOptions(ParametersIterator):
+    '''
+    
+    '''
+
+    def __init__(self,tracks = [1,2],events_in_file=10000,files=[0,1,2,3,4,5,6,7],val_files = [8],test_files = [9],batch_size = 256,prefetch_size = 2):
+        ParametersIterator.__init__(self)
+        self.tracks             = tracks
+        self.events_in_file     = events_in_file
+        self.files              = files
+        self.val_files          = val_files
+        self.test_files         = test_files
+        self.batch_size         = batch_size
+        self.prefetch_size      = prefetch_size
+
+    def get_shuffle_size(self) -> int:
+        return len(self.tracks)*self.events_in_file*len(self.files)
+
+    def approximate_steps_in_epoch(self) -> int:
+        return int(self.get_shuffle_size()/self.batch_size)
+
+
 if __name__=="__main__":
-    raise NotImplementedError(f"{__file__}:{current_line()} is not implemented. This script should not be called directly.")
+    raise NotImplementedError(f"[{__file__}:{current_line()-1}]: main is not implemented. This script should not be called directly.")
