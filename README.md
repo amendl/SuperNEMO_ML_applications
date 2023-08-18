@@ -63,7 +63,7 @@ Almost everything runs ot top of `python3`. On CCLyon use `python` sourced with 
 This software should be installed in python or Anaconda environment (python environment is prefered since it can access  both sourced root package and all gpu related software directly, however it is still possible to make it work with Anaconda)
  * `root` - Root is not needed to be explicitly installed in python or Anaconda environment, any sourced Root on CCLyon should work - minimum tested verion 6.22.06 (since July 12 2023 6.22.06-fix01 on CCLyon). **PyROOT is required.**
  * `cudatoolkit`, `cudnn` - Should be already installed on CCLyon 
- * `tensorflow` - (ideally 2.13, older version produce some random bug)
+ * `tensorflow` - (ideally 2.13, older version produce some random bug with invalid version of openSSL build)
  * `keras` - Should be part of `tensorflow`
  * `keras-tuner` - hyperparameter tuning
  * `numpy`
