@@ -26,10 +26,10 @@ If you have any questions feel free to contact me at [adam.mendl@cvut.cz](mailto
 The way to add tensorflow into binaries into [TKEvent](https://github.com/TomasKrizak/TKEvent) was found. It will only reqire c api for TensorFlow which can be downloaded from TensorFlow webside and links dynamically to analysation code. It might be even possible to use this solution within root macros (i.e. running code via `root <filename>.cxx`). For more information, see "Working with real data (future-proof)" section.
 
 **From now, this section is only about results on generator**
- ## Associated calorimeter hits
+## Associated calorimeter hits
  * Performance depends on number of tracks in event. For one track, we have 98% accuracy. For more tracks, it is multilabel classification problem, which is much more harder to analyse and measure performance for. However, we can say that multilabel classification approach from Meta Research (Softmax on one hot encoding divided by number of tracks) performs significantly better than classical approach with BinaryCrossentropy. See [Results](#results) section.
  * However associated calohit without clustering is probably useless and if we have working clustering, we can then us single label classifcation on one track.
- ## Clustering
+## Clustering
 Three strategies proposed:
  1. Approach by Matteo (basically SegNET architecture - see resources in the end of this document) enhanced by Generative Adversarial Networks.
  2. Train simple autoencoder. Then, disconnect decoder and use only encoder. The clustering/image segmentation will be done within latent space (output of encoder). It means that we will generate latent representation of event (r1), then we will generate latent representation of event without one track (r2) and train model to go from (r1) to (r2). if we want to see clustered event, we can push the modified image latent representation into decoder.
@@ -90,7 +90,7 @@ If you start job from bash instance with some packages, modules or virtual envir
 3. install [packages](#required-software) (if not done yet)
 4. load python virtual environment (or add `#! <path-to-your-python-bin-in-envorinment>` to first line of your script)
 ## Working with real data (temporary solution)
-We test models on real data and compared them with [TKEvent](https://github.com/TomasKrizak/TKEvent). Unfortunately, it is not possible to open `root` files produced by [TKEvent](https://github.com/TomasKrizak/TKEvent) library since this library might be built with different version of python and libstdc++. Fortunately, workaround exists. We need to download and build two versions of [TKEvent](https://github.com/TomasKrizak/TKEvent). First version will be built in the manner described in [TKEvent](https://github.com/TomasKrizak/TKEvent) README.md. The second library shoudl be build (we ignore the `red_to_tk` target) with following steps:
+We test models on real data and compared them with [TKEvent](https://github.com/TomasKrizak/TKEvent). Unfortunately, it is not possible to open `root` files produced by [TKEvent](https://github.com/TomasKrizak/TKEvent) library from python with the same library sourced since this library might be built with different version of python and libstdc++. Fortunately, workaround exists. We need to download and build two versions of [TKEvent](https://github.com/TomasKrizak/TKEvent). First version will be built in the manner described in [TKEvent](https://github.com/TomasKrizak/TKEvent) README.md. The second library shoudl be build (we ignore the `red_to_tk` target) with following steps:
 
 1. `module add ROOT` where `ROOT` is version of `root` library used by `tensorflow` (**currently `module add Analysis/root/6.22.06-fix01`**)
 2. `TKEvent/TKEvent/install.sh` to build library 
@@ -117,7 +117,7 @@ def import_arbitrary_module(module_name,path):
  2. `tensorflow` sometimes runs out of memory - Don't use checkpoints for `tensorboard`. Another cause of this problem might be training more models in one process, we can solve this by `keras.backend.clear_session()`. If this error occurs after several hours of program execution, check out function `tf.config.experimental.set_memory_growth`. 
  3. TensorFlow 2.13 distributed training fail - https://github.com/tensorflow/tensorflow/issues/61314
  4. Sometimes, there are strange errors regarding ranks of tensors while using custom training loop in `gan.py` - looks like really old still unresolved bug inside core tensorflow library. However, the workaround is to pass only one channel into CNN architecture and concat them with `tf.keras.layers.Concatenate`
- 5. `numpy` ocasionally stops working, failing to import (`numpy.core._multiarray_umath` or other parts of `numpy` library). Is is accompanied by message:
+ 5. `numpy` ocasionally stops working (maybe connected to [this](https://github.com/pypa/pip/issues/9542) issue), failing to import (`numpy.core._multiarray_umath` or other parts of `numpy` library). Is is accompanied by message:
  ```
 IMPORTANT: PLEASE READ THIS FOR ADVICE ON HOW TO SOLVE THIS ISSUE!
 
@@ -142,6 +142,8 @@ installed.
    * `class RoutingByAgreement` implements routing by agreement procedure proposed by Hinton using `tf.while_loop`
    * `class PrimaryCapsule` - implements the first capsule layer in CapsNET architecture
    * `class SecondaryCapsule` implements the second capsule layer in CapsNET architecture 
+## `gan_tests`
+Test whether my GAN algorithm works. Replicating https://www.tensorflow.org/tutorials/generative/dcgan
 ## `architectures`
  * `top.py`
  * `top_big.py`
