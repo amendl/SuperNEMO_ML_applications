@@ -82,7 +82,7 @@ Optional:
 ## Running scripts (on CCLyon in2p3 cluster)
 Example is at `example_exec.sh`. Run it with `sbatch --mem=... -n 1 -t ... gres=gpu:v100:N example_exec.sh` if you have access to GPU, where `N` is number of GPUs you want to use (currently CCLyon does not allow me to use more than three of them) Otherwise, leave out `gres` option.
 
-Scripts can use two strategies. To use only one GPU use option `--OneDeviceStrategy "/gpu:0"`. If you want to use more GPUs, use for example `--MirroredStrategy "/gpu:0" "/gpu:1" "/gpu:2"`.
+Scripts can use two strategies. To use only one GPU use option `--OneDeviceStrategy "/gpu:0"`. If you want to use more GPUs, use for example `--MirroredStrategy "/gpu:0" "/gpu:1" "/gpu:2"`. For some reason, I was never able to use more than 3 GPUs on CClyon.
 
 If you start job from bash instance with some packages, modules or virtual environment loaded, you should unload them/deactivate them (use `module purge --force`). Best way is to start from fresh bash instance.
 ## Workflow overview
