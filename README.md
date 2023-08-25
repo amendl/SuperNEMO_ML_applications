@@ -31,12 +31,14 @@ Performance depends on number of tracks in event. For one track, we have 98% acc
 ## Clustering
 Three strategies proposed:
  1. Approach by Matteo (basically SegNET architecture - see resources in the end of this document) enhanced by Generative Adversarial Networks.
- 2. Train simple autoencoder. Then, disconnect decoder and use only encoder. The clustering/image segmentation will be done within latent space (output of encoder). It means that we will generate latent representation of event (r1), then we will generate latent representation of event without one track (r2) and train model to go from (r1) to (r2). if we want to see clustered event, we can push the modified image latent representation into decoder.
+     * 
+ 2. Approach by Matteo enhanced by some kind of attention mechanism. It has been shown (for example on LLMs) that attention models sequences and relations between features well. It can be then trained using GANs.
+ 3. Train simple autoencoder. Then, disconnect decoder and use only encoder. The clustering/image segmentation will be done within latent space (output of encoder). It means that we will generate latent representation of event (r1), then we will generate latent representation of event without one track (r2) and train model to go from (r1) to (r2). if we want to see clustered event, we can push the modified image latent representation into decoder.
      * Cannot find simple resources about image segmentation within latent space (only really complicated modern foundation models which are definitely overkill for SuperNEMO tracker).
      * Will be beneficial only if the latent space is small.
      * Some results from fitting givethe idea that this will not work (see next subsection).
      * Some of these problems might be resolved by using **Variational autoencoder**.
- 3. Model (basically one layer with convolutional filters) with two channels as input. One channel wil be the actual event and the second will be the track that we are clustering. 
+ 4. Model (basically one layer with convolutional filters) with two channels as input. One channel wil be the actual event and the second will be the track that we are clustering. 
 ### Generative Adversarial Networks
 In literature, the approach of learning similarity metrics in GAN manner is called (V)AE/GAN depending on whether autoencoder is variational. See for example [Autoencoding beyond pixels using a learned similarity metric](https://arxiv.org/pdf/1512.09300.pdf).
 
