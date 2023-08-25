@@ -27,8 +27,7 @@ The way to add tensorflow into binaries into [TKEvent](https://github.com/TomasK
 
 **From now, this section is only about results on generator**
 ## Associated calorimeter hits
- * Performance depends on number of tracks in event. For one track, we have 98% accuracy. For more tracks, it is multilabel classification problem, which is much more harder to analyse and measure performance for. However, we can say that multilabel classification approach from Meta Research (Softmax on one hot encoding divided by number of tracks) performs significantly better than classical approach with BinaryCrossentropy. See [Results](#results) section.
- * However associated calohit without clustering is probably useless and if we have working clustering, we can then us single label classifcation on one track.
+Performance depends on number of tracks in event. For one track, we have 98% accuracy. For more tracks, it is multilabel classification problem, which is much more harder to analyse and measure performance for. However, we can say that multilabel classification approach from Meta Research (Softmax on one hot encoding divided by number of tracks) performs significantly better than classical approach with BinaryCrossentropy. See [Results](#results) section. However associated calohit without clustering is probably useless and if we have working clustering, we can then us single label classifcation on one track so there is nothing groundbreaking here.
 ## Clustering
 Three strategies proposed:
  1. Approach by Matteo (basically SegNET architecture - see resources in the end of this document) enhanced by Generative Adversarial Networks.
