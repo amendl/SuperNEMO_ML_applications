@@ -233,6 +233,7 @@ Aproach to clustering done by Matteo. Sometimes works really well, sometimes rea
   * [Autoencoding beyond pixels using a learned similarity metric](https://arxiv.org/pdf/1512.09300.pdf)
     * Summarizes AE, VAE, VAE/GAN approach (my approach for clustering tracker hits)
   * [Advanced GANs - Exploring Normalization Techniques for GAN training: Self-Attention and Spectral Norm](https://sthalles.github.io/advanced_gans/)
+  * [Attention + convolution #1](https://arxiv.org/abs/1904.09925), [Attention + convolution #2](https://medium.com/mlearning-ai/self-attention-in-convolutional-neural-networks-172d947afc00), [Attention + convolution #3](https://medium.com/ai-salon/understanding-deep-self-attention-mechanism-in-convolution-neural-networks-e8f9c01cb251)
 ## Image Segmentation (clustering tracker hits)
  * [Image Segmentation Using Deep Learning: A Survey](https://arxiv.org/pdf/2001.05566.pdf)
  * [SegNET](https://arxiv.org/pdf/1511.00561.pdf)
