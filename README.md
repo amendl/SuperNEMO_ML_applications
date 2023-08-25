@@ -143,7 +143,8 @@ installed.
    * `class PrimaryCapsule` - implements the first capsule layer in CapsNET architecture
    * `class SecondaryCapsule` implements the second capsule layer in CapsNET architecture 
 ## `gan_tests`
-Test whether my GAN algorithm works. Replicating https://www.tensorflow.org/tutorials/generative/dcgan
+Testing whether my GAN algorithm works. Replicating https://www.tensorflow.org/tutorials/generative/dcgan. One important problem found: when missing batch normalizatio inside generator architecture, gan fails to reprodudce digits. Possible solutions for modelling longer shapes such a
+tracks might be self-attention (really want this in architecture, massively beneficial for any ML task and implemented in CapsNET). See short article in [Resources](#convolutional-neural-networks-autoencoders-and-gans).
 ## `architectures`
  * `top.py`
  * `top_big.py`
@@ -228,6 +229,7 @@ Aproach to clustering done by Matteo. Sometimes works really well, sometimes rea
     * next diccusses semi-superwised learning and unsuperwised clustering (clustering of images, not image segmentation what we want to achieve)
   * [Autoencoding beyond pixels using a learned similarity metric](https://arxiv.org/pdf/1512.09300.pdf)
     * Summarizes AE, VAE, VAE/GAN approach (my approach for clustering tracker hits)
+  * [Advanced GANs - Exploring Normalization Techniques for GAN training: Self-Attention and Spectral Norm](https://sthalles.github.io/advanced_gans/)
 ## Image Segmentation (clustering tracker hits)
  * [Image Segmentation Using Deep Learning: A Survey](https://arxiv.org/pdf/2001.05566.pdf)
  * [SegNET](https://arxiv.org/pdf/1511.00561.pdf)

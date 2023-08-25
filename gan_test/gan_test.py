@@ -1,6 +1,7 @@
 
 import numpy as np
 
+import tensorrt
 import tensorflow as tf
 from tensorflow import keras
 import tensorflow.keras.backend as K
@@ -14,7 +15,7 @@ import pickle
 
 BUFFER_SIZE = 60000
 BATCH_SIZE = 256
-EPOCHS = 30
+EPOCHS = 80
 NOISE_DIM = 100
 
 
@@ -41,7 +42,7 @@ def make_generator_model():
 
     model = tf.keras.Sequential()
     model.add(keras.layers.Dense(7*7*256, use_bias=False, input_shape=(100,)))
-    model.add(keras.layers.BatchNormalization())
+    # model.add(keras.layers.BatchNormalization())
     model.add(keras.layers.LeakyReLU())
 
     model.add(keras.layers.Reshape((7, 7, 256)))
@@ -49,12 +50,12 @@ def make_generator_model():
 
     model.add(keras.layers.Conv2DTranspose(128, (5, 5), strides=(1, 1), padding='same', use_bias=False))
     assert model.output_shape == (None, 7, 7, 128)
-    model.add(keras.layers.BatchNormalization())
+    # model.add(keras.layers.BatchNormalization())
     model.add(keras.layers.LeakyReLU())
 
     model.add(keras.layers.Conv2DTranspose(64, (5, 5), strides=(2, 2), padding='same', use_bias=False))
     assert model.output_shape == (None, 14, 14, 64)
-    model.add(keras.layers.BatchNormalization())
+    # model.add(keras.layers.BatchNormalization())
     model.add(keras.layers.LeakyReLU())
 
     model.add(keras.layers.Conv2DTranspose(1, (5, 5), strides=(2, 2), padding='same', use_bias=False, activation='tanh'))
@@ -391,6 +392,8 @@ if __name__=="__main__":
 
         (train_images, train_labels), (_, _) = tf.keras.datasets.mnist.load_data()
 
+        train_images = train_images.reshape(train_images.shape[0], 28, 28, 1).astype('float32')
+        train_images = (train_images - 127.5) / 127.5  # Normalize the images to [-1, 1]
         train_dataset = tf.data.Dataset.from_tensor_slices(train_images).shuffle(BUFFER_SIZE).batch(BATCH_SIZE).prefetch(1)
 
     history = train(
