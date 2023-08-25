@@ -74,6 +74,7 @@ This software should be installed in python or Anaconda environment (python envi
  * `argparse`
  
 Optional:
+ * `tensorrt` - really useful, makes inference and training of models faster on CPU. It can be also installed in two steps, first install `nvidia-pyindex` and then `nvidia-tensorrt`. **To use it succesfully within scripts, you should import it before tensorflow!**
  * `tensorboard` - Should be part of `tensorflow`
  * `tensorboard_plugin_profile` - profiling
  * `nvidia-pyindex`, `nvidia-tensorrt` - For TensorRT support
