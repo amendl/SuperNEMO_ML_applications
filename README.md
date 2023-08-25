@@ -137,6 +137,7 @@ installed.
  * `multilabel_analysis.py` - script for analysing various aspect of multilabel classifier used for associated calorimeter hit detection
  * `gan.py` - 
  * `testing_clustering.py` - code for testing tracker hit clustering algorithms
+ * `self_attention.py` - primitive self-attention model for convolutional autoencoder within GAN
  * `capsule_lib.py` - basic parts of CapsNET architecture
    * For more information about CapsNET and capsules, see [Resources](#resources)
    * `class RoutingByAgreement` implements routing by agreement procedure proposed by Hinton using `tf.while_loop`
