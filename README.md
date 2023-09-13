@@ -222,7 +222,7 @@ Aproach to clustering done by Matteo. Sometimes works really well, sometimes rea
 # Resources
 ## Convolutional neural networks, autoencoders and GANs
  * [Multi-label image classification](https://towardsdatascience.com/multi-label-image-classification-with-neural-network-keras-ddc1ab1afede)
- * [ResNetXt](https://arxiv.org/pdf/1611.05431.pdf)
+ * [ResNetXt original paper](https://arxiv.org/pdf/1611.05431.pdf)
  * [Deep Convolutional Generative Adversarial Network](https://www.tensorflow.org/tutorials/generative/dcgan)
  * [Building a simple Generative Adversarial Network (GAN) using TensorFlow](https://blog.paperspace.com/implementing-gans-in-tensorflow/)
  * [NIPS 2016 Tutorial: Generative Adversarial Networks](https://arxiv.org/pdf/1701.00160.pdf)
