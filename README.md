@@ -11,10 +11,9 @@ If you have any questions feel free to contact me at [adam.mendl@cvut.cz](mailto
  * Use generative adversarial networks with convolutional autoencoders for track clustering.
  * Predict associated calorimeter hit(s) using single-label classification on clustered events or multi-label classification on not clustered events.
 # Progress
- * Discussing with Tomas how to incorporate ML into his fitting algorithm.
  * Tested track counting model on real data. Summary of all efforts is that the model adapts **pretty well** on measured data. 
  * First parts of CapsNET layer, hoping to finish this soon.
- * **Currently working on autoencoders** - I have done some simple tests with Matteos architecture. Now trying to use variational autoencoders.
+ * **Currently working on autoencoders** - Adding attention inside Matteos architecture, GAN algorithm finished
 ## Calculating number of tracks
  * Counting tracks done on my_generator (works really well). It removes the problem that [SN-IEGenerator](https://github.com/SuperNEMO-DBD/SN-IEgenerator) sometimes generates event with less tracks.
  * Tested on real data, two main problems:
@@ -211,8 +210,11 @@ Aproach to clustering done by Matteo. Sometimes works really well, sometimes rea
  * [Confusion matrix for combined model (my_generator)](./ImagesAndDocuments/combined_model_my_generator_confusion_matrix.pdf)
  * [Confusion matrix for prediction of angle from top view (my_generator)](./ImagesAndDocuments/angle_1_confusion.pdf)
  * [Comparison of accuracy for associated calorimeter (classical sigmoid approach and softmax approach proposed by Meta Research for multi-label classification tasks)](./ImagesAndDocuments/multilabel.pdf) - please not that multi-label classification is complex task, so these results **require further analysis**! 
- * [Clustering approach by Matteo - learned on my_generator with events with 2 tracks to remove left track - sometimes works, sometimes doesnt](./ImagesAndDocuments/matteo_testing)
+ * [Clustering approach by Matteo (no attention, with skip connections)- learned on my_generator with events with 2 tracks to remove left track - sometimes works, sometimes doesnt](./ImagesAndDocuments/matteo_testing)
    * To see this well cat this file into terminal.
+ * Approach done by Matteo without skip connections produces  empty pictures (learned on my_generator with events with 2 tracks to remove left track - sometimes works, sometimes doesnt)
+ * To be added: [Clustering approach by Matteo (attention, with skip connections) - learned on my_generator with events with 2 tracks to remove left track]()
+ * To be added: [Clustering approach by Matteo (attention, without skip connections) - learned on my_generator with events with 2 tracks to remove left track]()
 ## Real data
  * [Prediction of number of tracks on real data](./ImagesAndDocuments/top_model_classification)
    * only top view
